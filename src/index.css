@@ -1,0 +1,31 @@
+/* index.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-base-black text-white antialiased;
+}
+
+@layer components {
+  .nav-link {
+    @apply flex items-center gap-2 px-3 py-2 rounded-md transition-all duration-200 relative group;
+  }
+  
+  .nav-tooltip {
+    @apply absolute left-full ml-2 px-3 py-1.5 bg-base-800 rounded-md text-sm
+           opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap
+           border border-white/10;
+  }
+
+  .section-card {
+    @apply bg-base-800/50 backdrop-blur-sm border border-white/5 
+           rounded-lg p-6 hover:border-white/10 transition-all duration-300;
+  }
+
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60;
+  }
+}
