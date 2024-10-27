@@ -13,16 +13,24 @@ import {
   Github,
 } from 'lucide-react';
 
-// Placeholder videos for personal projects
-const placeholderVideos = [
-  'https://www.w3schools.com/html/mov_bbb.mp4',
-  'https://www.w3schools.com/html/movie.mp4',
+// Glitch Art Images (using raw GitHub URLs)
+const glitchImages = [
+  'https://raw.githubusercontent.com/Themolx/WEB/0b3bbdc1f4fead85162a2cf826e439b9621dd400/assets/Glitch/1.png',
+  'https://raw.githubusercontent.com/Themolx/WEB/0b3bbdc1f4fead85162a2cf826e439b9621dd400/assets/Glitch/2.png',
+  'https://raw.githubusercontent.com/Themolx/WEB/0b3bbdc1f4fead85162a2cf826e439b9621dd400/assets/Glitch/3.png',
+  'https://raw.githubusercontent.com/Themolx/WEB/0b3bbdc1f4fead85162a2cf826e439b9621dd400/assets/Glitch/4.png',
+  'https://raw.githubusercontent.com/Themolx/WEB/0b3bbdc1f4fead85162a2cf826e439b9621dd400/assets/Glitch/6.png',
+  'https://raw.githubusercontent.com/Themolx/WEB/0b3bbdc1f4fead85162a2cf826e439b9621dd400/assets/Glitch/7.png',
+  'https://raw.githubusercontent.com/Themolx/WEB/0b3bbdc1f4fead85162a2cf826e439b9621dd400/assets/Glitch/9.png',
+  'https://raw.githubusercontent.com/Themolx/WEB/0b3bbdc1f4fead85162a2cf826e439b9621dd400/assets/Glitch/12.png',
 ];
 
-// Placeholder images for Analog Photography
-const placeholderImages = [
-  'https://via.placeholder.com/400x300.png?text=Analog+Photo+1',
-  'https://via.placeholder.com/400x300.png?text=Analog+Photo+2',
+// Analog Photography Images (updated to use raw GitHub URLs)
+const analogImages = [
+  'https://raw.githubusercontent.com/Themolx/WEB/0b3bbdc1f4fead85162a2cf826e439b9621dd400/assets/foto/1.jpg',
+  'https://raw.githubusercontent.com/Themolx/WEB/0b3bbdc1f4fead85162a2cf826e439b9621dd400/assets/foto/2.jpg',
+  'https://raw.githubusercontent.com/Themolx/WEB/0b3bbdc1f4fead85162a2cf826e439b9621dd400/assets/foto/3.jpg',
+  'https://raw.githubusercontent.com/Themolx/WEB/0b3bbdc1f4fead85162a2cf826e439b9621dd400/assets/foto/4.jpg',
 ];
 
 // Your profile picture
@@ -122,7 +130,7 @@ const ProjectCard = ({
                       key={index}
                       src={mediaSrc}
                       alt={`${title} ${index + 1}`}
-                      className="w-full rounded-lg object-cover"
+                      className="w-full h-auto rounded-lg object-cover"
                     />
                   ))}
                 </div>
@@ -495,45 +503,43 @@ const HomePage = () => {
 
             {/* Experimental Animation & Glitch Art */}
             <ProjectCard
-              title="Experimental Animation & Glitch Art"
-              description="Playing and experimenting with AI image and video, LLMs, and creating experimental animations and glitch art."
+              title="Glitch Art"
+              description="Experimental glitch art created through various digital manipulation techniques."
               moreInfo={
                 <div className="space-y-2">
-                  <h4 className="font-semibold mb-2">Activities:</h4>
+                  <h4 className="font-semibold mb-2">Techniques:</h4>
                   <ul className="list-disc pl-5 space-y-1 text-gray-700 leading-relaxed">
-                    <li>Experimenting with AI tools for image and video generation</li>
-                    <li>Creating glitch art through analog and digital methods</li>
-                    <li>Integrating AI and machine learning into creative workflows</li>
+                    <li>Digital signal manipulation</li>
+                    <li>Data moshing</li>
+                    <li>Custom processing algorithms</li>
                   </ul>
                 </div>
               }
-              media={placeholderVideos}
-              mediaType="video"
+              media={glitchImages}
+              mediaType="image"
               alwaysExpanded={true}
               className="col-span-1 md:col-span-2"
             />
 
             {/* Analog Photography */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <ProjectCard
-                title="Analog Photography"
-                description="Capturing moments through analog lenses and developing alternative film processes."
-                moreInfo={
-                  <div className="space-y-2">
-                    <h4 className="font-semibold mb-2">Activities:</h4>
-                    <ul className="list-disc pl-5 space-y-1 text-gray-700 leading-relaxed">
-                      <li>Film photography using various camera models</li>
-                      <li>Darkroom development techniques</li>
-                      <li>Creative photo manipulation</li>
-                    </ul>
-                  </div>
-                }
-                media={placeholderImages}
-                mediaType="image"
-                alwaysExpanded={true}
-                className="col-span-1 md:col-span-2"
-              />
-            </div>
+            <ProjectCard
+              title="Analog Photography"
+              description="Capturing moments through analog lenses and developing alternative film processes."
+              moreInfo={
+                <div className="space-y-2">
+                  <h4 className="font-semibold mb-2">Activities:</h4>
+                  <ul className="list-disc pl-5 space-y-1 text-gray-700 leading-relaxed">
+                    <li>Film photography using various camera models</li>
+                    <li>Darkroom development techniques</li>
+                    <li>Creative photo manipulation</li>
+                  </ul>
+                </div>
+              }
+              media={analogImages}
+              mediaType="image"
+              alwaysExpanded={true}
+              className="col-span-1 md:col-span-2"
+            />
           </div>
         );
       default:
