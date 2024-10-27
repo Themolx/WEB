@@ -1,4 +1,4 @@
-// App.js
+// pages/index.js
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Clapperboard,
@@ -13,13 +13,8 @@ import {
   Github,
 } from 'lucide-react';
 
-// Placeholder video URL for your showreel
-const showreelVideo = 'https://www.w3schools.com/html/mov_bbb.mp4'; // Replace with your showreel URL
-
 // Placeholder videos for personal projects
 const placeholderVideos = [
-  'https://www.w3schools.com/html/mov_bbb.mp4',
-  'https://www.w3schools.com/html/movie.mp4',
   'https://www.w3schools.com/html/mov_bbb.mp4',
   'https://www.w3schools.com/html/movie.mp4',
 ];
@@ -28,12 +23,7 @@ const placeholderVideos = [
 const placeholderImages = [
   'https://via.placeholder.com/400x300.png?text=Analog+Photo+1',
   'https://via.placeholder.com/400x300.png?text=Analog+Photo+2',
-  'https://via.placeholder.com/400x300.png?text=Analog+Photo+3',
-  'https://via.placeholder.com/400x300.png?text=Analog+Photo+4',
 ];
-
-// Black square placeholder for logos
-const blackSquare = 'https://via.placeholder.com/150/000000/FFFFFF?text=Logo';
 
 // Your profile picture
 const profilePicture =
@@ -52,7 +42,6 @@ const ProjectCard = ({
   mediaType, // 'video' or 'image'
   alwaysExpanded = false, // Controls expansion behavior
   className = '', // Allows additional class names for styling
-  thumbnail, // Thumbnail image or video
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const mediaRefs = useRef([]);
@@ -100,15 +89,6 @@ const ProjectCard = ({
       }}
     >
       <div className="flex items-center">
-        {thumbnail && (
-          <div className="mr-4">
-            <img
-              src={thumbnail}
-              alt={`${title} Thumbnail`}
-              className="w-16 h-16 rounded-lg object-cover"
-            />
-          </div>
-        )}
         <div>
           <h3 className="text-xl font-semibold text-gray-900 mb-1">{title}</h3>
           {duration && <p className="text-sm text-gray-500 mb-1">{duration}</p>}
@@ -137,10 +117,10 @@ const ProjectCard = ({
                 </div>
               ) : mediaType === 'image' ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {media.map((imageSrc, index) => (
+                  {media.map((mediaSrc, index) => (
                     <img
                       key={index}
-                      src={imageSrc}
+                      src={mediaSrc}
                       alt={`${title} ${index + 1}`}
                       className="w-full rounded-lg object-cover"
                     />
@@ -158,7 +138,6 @@ const ProjectCard = ({
       {showDetails && !moreInfo && (
         <div className="mt-4">
           <p className="text-gray-700 leading-relaxed">
-            {/* Add any additional details you want to show on hover */}
             Experience and proficiency details can be added here.
           </p>
         </div>
@@ -170,7 +149,7 @@ const ProjectCard = ({
 /**
  * Main App Component
  */
-const App = () => {
+const HomePage = () => {
   const [activeSection, setActiveSection] = useState('summary');
 
   // Update the page title on component mount
@@ -231,39 +210,41 @@ const App = () => {
           <div className="space-y-6">
             {/* Showreel Video */}
             <div className="mb-8">
-              <video
-                src={showreelVideo}
-                controls
-                autoPlay
-                muted
-                loop
-                className="w-full rounded-xl shadow-lg"
-              />
+              <div className="relative pb-[56.25%] h-0 overflow-hidden rounded-xl shadow-lg">
+                <iframe
+                  src="https://player.vimeo.com/video/1016090207"
+                  frameBorder="0"
+                  allow="autoplay; fullscreen; picture-in-picture"
+                  allowFullScreen
+                  className="absolute top-0 left-0 w-full h-full"
+                ></iframe>
+              </div>
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
               Hello, I'm <span className="text-indigo-600">Martin Tomek</span>
             </h1>
             <p className="text-lg text-gray-700 max-w-3xl leading-relaxed">
               I'm a <strong>Mid-Level Compositor</strong> and{' '}
-              <strong>Technical Director (TD)</strong> based in{' '}
+              <strong>VFX Artist</strong> based in{' '}
               <strong>Prague, Czech Republic</strong>, with a passion for{' '}
               <strong>visual storytelling</strong> and a keen eye for detail. With over{' '}
-              <strong>three years of experience</strong> in compositing, pipeline development, and
-              motion graphics, I specialize in using <strong>Nuke</strong> for creating seamless
-              visual effects and developing tailored VFX tools and scripts.
-            </p>
-            <p className="text-lg text-gray-700 max-w-3xl leading-relaxed">
-              Currently, I work with <strong>Incognito Studio</strong> and <strong>PFX Studio</strong>,
-              contributing to major projects like <em>"Proud Princess"</em> and{' '}
-              <em>"Rosa & Dara a jejich velké letní dobrodružství"</em>, a 3D feature film that blends
-              2D and 3D animation. My expertise extends to on-set VFX supervision and integrating
-              analog and digital media, including <strong>VJing</strong> with{' '}
-              <strong>Resolume Arena</strong> and <strong>TouchDesigner</strong>.
+              <strong>three years of experience</strong> in compositing and motion graphics, I
+              specialize in using <strong>Nuke</strong> and <strong>After Effects</strong> to
+              create seamless visual effects.
             </p>
             <p className="text-lg text-gray-700 max-w-3xl leading-relaxed">
               I'm always eager to embrace new challenges and opportunities, and I'm willing to
               relocate, with a particular interest in the <strong>Canary Islands</strong>.
             </p>
+            {/* Contact Me Button */}
+            <button
+              onClick={() => {
+                window.location.href = 'mailto:martintomek.vfx@gmail.com';
+              }}
+              className="mt-6 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors"
+            >
+              Contact Me
+            </button>
           </div>
         );
       case 'film':
@@ -272,8 +253,8 @@ const App = () => {
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Film Projects</h1>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <ProjectCard
-                title='"Proud Princess"'
-                duration="PFX Studio | October 2023 - Present"
+                title="Proud Princess"
+                duration="PFX Studio | September 2024 - October 2024"
                 description="- Compositing work on the feature film."
                 moreInfo={
                   <div className="space-y-2">
@@ -286,10 +267,9 @@ const App = () => {
                 }
                 media={null}
                 mediaType={null}
-                thumbnail={blackSquare}
               />
               <ProjectCard
-                title='"Rosa & Dara a jejich velké letní dobrodružství"'
+                title="Rosa & Dara a jejich velké letní dobrodružství"
                 duration="Incognito Studio | August 2021 - Present"
                 description="- Compositor and developer for a 3D feature film."
                 moreInfo={
@@ -304,7 +284,6 @@ const App = () => {
                 }
                 media={null}
                 mediaType={null}
-                thumbnail={blackSquare}
               />
             </div>
           </div>
@@ -315,39 +294,67 @@ const App = () => {
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Professional Experience</h1>
             <div className="space-y-6">
               <ProjectCard
-                title="Mid Compositor & Technical Director"
-                duration="Incognito Studio | August 2021 - Present"
-                description={`- VFX Compositing and development work for clients including Panasonic Japan, Moneta Bank, and McDonald's
-- VFX Supervisor for the Creditas project`}
+                title="Proud Princess - Compositor"
+                duration="PFX Studio | September 2024 - October 2024"
+                description="- Worked on compositing for the feature film."
                 moreInfo={null}
                 media={null}
                 mediaType={null}
-                thumbnail={blackSquare}
               />
               <ProjectCard
-                title="Freelance Nuke Compositor"
-                duration="Let it Roll Festival | July 2023 - August 2023"
-                description="- Compositing of a 5-minute opening sequence using Nuke and Nuke Studio"
-                moreInfo={null}
+                title="Nuke Compositor & VFX Supervisor"
+                duration="Incognito Studio | August 2021 - Present"
+                description="- Provided VFX services for various high-profile clients."
+                moreInfo={
+                  <div className="space-y-2">
+                    <h4 className="font-semibold mb-2">Clients:</h4>
+                    <ul className="list-disc pl-5 space-y-1 text-gray-700 leading-relaxed grid grid-cols-2 gap-2">
+                      <li>Panasonic Japan</li>
+                      <li>Moneta Bank</li>
+                      <li>McDonald's</li>
+                      <li>Ketoknoflik</li>
+                      <li>PSS</li>
+                      <li>T-Mobile</li>
+                      <li>O2</li>
+                      <li>7energy</li>
+                      <li>Billa</li>
+                      <li>Epet</li>
+                    </ul>
+                    <p className="text-gray-700 leading-relaxed">
+                      VFX Supervisor for the Creditas project.
+                    </p>
+                    <p className="text-gray-700 leading-relaxed">
+                      Working on "Rosa & Dara a jejich velké letní dobrodružství", a 3D feature film.
+                    </p>
+                  </div>
+                }
                 media={null}
                 mediaType={null}
-                thumbnail={blackSquare}
               />
               <ProjectCard
                 title="Freelance Motion Graphic Designer"
                 duration="VIG Production | October 2023 - Present"
-                description="- Created motion graphics for various client projects"
+                description="- Created motion graphics for various client projects."
                 moreInfo={null}
                 media={null}
                 mediaType={null}
-                thumbnail={blackSquare}
               />
-              <h2 className="text-2xl font-bold text-gray-900 mt-8">Education</h2>
-              <div className="mt-4">
-                <p className="text-gray-700 leading-relaxed">
-                  - The University of Creative Communication, Prague - Degree in VFX and Animation
-                </p>
-              </div>
+              <ProjectCard
+                title="Freelance Nuke Compositor"
+                duration="Let it Roll Festival | July 2023 - August 2023"
+                description="- Co-created a 5-minute opening sequence using Nuke and Nuke Studio."
+                moreInfo={null}
+                media={null}
+                mediaType={null}
+              />
+              {/* Education Section with Border */}
+              <ProjectCard
+                title="Education"
+                description="- The University of Creative Communication, Prague - Degree in VFX and Animation"
+                moreInfo={null}
+                media={null}
+                mediaType={null}
+              />
             </div>
           </div>
         );
@@ -358,15 +365,15 @@ const App = () => {
             <div className="grid grid-cols-1 gap-6">
               <ProjectCard
                 title="Software Proficiency"
-                description={`• Nuke
-• After Effects
+                description={`• Nuke (3 years)
+• After Effects (8 years)
 • DaVinci Resolve
 • Adobe Creative Suite
 • Resolume Arena
 • TouchDesigner`}
                 moreInfo={
                   <p className="text-gray-700 leading-relaxed">
-                    Experience in creating complex visual effects and motion graphics using these
+                    Experienced in creating complex visual effects and motion graphics using these
                     software tools.
                   </p>
                 }
@@ -378,8 +385,7 @@ const App = () => {
                 description={`• OpenPype
 • Ayon
 • On-set VFX Supervision
-• 2D and 3D Animation Integration
-• VJing`}
+• 2D and 3D Animation Integration`}
                 moreInfo={
                   <p className="text-gray-700 leading-relaxed">
                     Skilled in optimizing production pipelines and integrating various animation
@@ -390,11 +396,37 @@ const App = () => {
                 mediaType={null}
               />
               <ProjectCard
-                title="Technical Direction"
-                description="Developed tailored scripts and tools for pipeline optimization in VFX production, enhancing efficiency and productivity."
+                title="VJing"
+                description={`• Resolume Arena
+• TouchDesigner`}
                 moreInfo={
                   <p className="text-gray-700 leading-relaxed">
-                    Proficient in scripting and tool development to streamline workflows.
+                    Experience in live visual performances and interactive installations.
+                  </p>
+                }
+                media={null}
+                mediaType={null}
+              />
+              <ProjectCard
+                title="Programming and Technical Direction"
+                description={`• Python
+• JavaScript`}
+                moreInfo={
+                  <p className="text-gray-700 leading-relaxed">
+                    Developed tailored scripts and tools for pipeline optimization in VFX production,
+                    enhancing efficiency and productivity.
+                  </p>
+                }
+                media={null}
+                mediaType={null}
+              />
+              <ProjectCard
+                title="AI"
+                description={`• Understanding of AI and machine learning
+• Huge interest in new technology`}
+                moreInfo={
+                  <p className="text-gray-700 leading-relaxed">
+                    Exploring the integration of AI and machine learning into creative workflows.
                   </p>
                 }
                 media={null}
@@ -408,24 +440,77 @@ const App = () => {
           <div className="space-y-6">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Personal Projects</h1>
 
+            {/* Bachelor Movie */}
+            <ProjectCard
+              title="Bachelor Movie - Combining 3D Animation, AI, and Analog"
+              description="Created my own movie combining 3D animation, AI, and analog techniques to achieve unique visual effects."
+              moreInfo={
+                <div className="space-y-2">
+                  <a
+                    href="https://youtu.be/M6bm6yRKshA"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-indigo-600 hover:underline"
+                  >
+                    Watch the movie on YouTube
+                  </a>
+                  <p className="text-gray-700 leading-relaxed">
+                    This project explores the fusion of traditional and modern techniques,
+                    integrating AI-generated content, 3D animations, and analog processes to create
+                    a unique narrative experience.
+                  </p>
+                </div>
+              }
+              media={null}
+              mediaType={null}
+              alwaysExpanded={true}
+              className="col-span-1 md:col-span-2"
+            />
+
+            {/* Nuke Grab Tool */}
+            <ProjectCard
+              title="Nuke Grab Tool"
+              description="Implemented the Blender Grab Tool within Nuke, enhancing node movement capabilities."
+              moreInfo={
+                <div className="space-y-2">
+                  <a
+                    href="http://www.nukepedia.com/python/nodegraph/nuke-grab-tool"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-indigo-600 hover:underline"
+                  >
+                    View the tool on Nukepedia
+                  </a>
+                  <p className="text-gray-700 leading-relaxed">
+                    This script implements the whole Blender Grab Tool within Nuke, bringing its
+                    full node movement capabilities to your compositing workflow.
+                  </p>
+                </div>
+              }
+              media={null}
+              mediaType={null}
+              alwaysExpanded={true}
+              className="col-span-1 md:col-span-2"
+            />
+
             {/* Experimental Animation & Glitch Art */}
             <ProjectCard
               title="Experimental Animation & Glitch Art"
-              description="Creating experimental animations and glitch art by integrating analog and digital media."
+              description="Playing and experimenting with AI image and video, LLMs, and creating experimental animations and glitch art."
               moreInfo={
                 <div className="space-y-2">
                   <h4 className="font-semibold mb-2">Activities:</h4>
                   <ul className="list-disc pl-5 space-y-1 text-gray-700 leading-relaxed">
-                    <li>Analog photography and alternative film development</li>
-                    <li>VJing using Resolume Arena and TouchDesigner</li>
-                    <li>Mixed media art projects</li>
+                    <li>Experimenting with AI tools for image and video generation</li>
+                    <li>Creating glitch art through analog and digital methods</li>
+                    <li>Integrating AI and machine learning into creative workflows</li>
                   </ul>
                 </div>
               }
               media={placeholderVideos}
               mediaType="video"
-              alwaysExpanded={true} // Always show additional content
-              className="col-span-1 md:col-span-2" // Span both columns
+              alwaysExpanded={true}
+              className="col-span-1 md:col-span-2"
             />
 
             {/* Analog Photography */}
@@ -470,7 +555,7 @@ const App = () => {
             />
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Martin Tomek</h2>
-              <p className="text-sm text-gray-500 mt-1">Mid-Level Compositor & TD</p>
+              <p className="text-sm text-gray-500 mt-1">Motion Designer & VFX Artist</p>
             </div>
           </div>
 
@@ -507,7 +592,7 @@ const App = () => {
           </div>
 
           {/* Footer */}
-          <div className="mt-auto pt-6 border-t border-gray-200 hidden md:block">
+          <div className="mt-auto pt-6 border-t border-gray-200">
             <p className="text-sm text-gray-500">Available for new opportunities</p>
             <p className="text-sm text-gray-500 mt-1">
               Willing to relocate to Canary Islands
@@ -524,9 +609,11 @@ const App = () => {
       </nav>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8 overflow-y-auto">{renderContent()}</main>
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto pb-[600px]">
+        {renderContent()}
+      </main>
     </div>
   );
 };
 
-export default App;
+export default HomePage;

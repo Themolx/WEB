@@ -2,7 +2,7 @@
   "name": "martin-tomek-portfolio",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://Themolx.github.io/martin-tomek-portfolio",
+  "homepage": "https://Themolx.github.io/WEB",
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@mui/material": "^6.1.5",
