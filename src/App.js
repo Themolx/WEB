@@ -56,8 +56,10 @@ import {
   Scissors,
   Workflow,
   Gauge,
-  Sliders
+  Sliders,
+  Pause,
 } from 'lucide-react';
+import Player from '@vimeo/player';
 
 // ====================
 // Constants & Assets
@@ -101,15 +103,45 @@ const profilePicture = 'https://avatars.githubusercontent.com/u/183303841?s=400&
 const animationVariants = {
   slideInRight: {
     initial: { x: -100, opacity: 0 },
-    animate: { x: 0, opacity: 1 },
-    exit: { x: 100, opacity: 0 },
-    transition: { duration: 0.5, ease: 'easeInOut' }
+    animate: { 
+      x: 0, 
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 20
+      }
+    },
+    exit: { 
+      x: 100, 
+      opacity: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 20
+      }
+    }
   },
   fadeInUp: {
     initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 },
-    transition: { duration: 0.5, ease: 'easeOut' }
+    animate: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 20
+      }
+    },
+    exit: { 
+      opacity: 0, 
+      y: -20,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 20
+      }
+    }
   },
   container: {
     hidden: { opacity: 0 },
@@ -117,14 +149,32 @@ const animationVariants = {
       opacity: 1,
       transition: {
         staggerChildren: 0.1,
-        delayChildren: 0.3
+        delayChildren: 0.2,
+        type: "spring",
+        stiffness: 100,
+        damping: 20
       }
     }
   },
   item: {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 },
-    transition: { type: "spring", stiffness: 300, damping: 24 }
+    show: { 
+      opacity: 1, 
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 20
+      }
+    }
+  },
+  hover: {
+    scale: 1.02,
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 10
+    }
   }
 };
 
@@ -200,8 +250,15 @@ const LoadingSpinner = () => (
   <div className="fixed inset-0 bg-white z-50 flex items-center justify-center">
     <motion.div
       className="w-16 h-16 border-4 border-gray-200 border-t-black rounded-full"
-      animate={{ rotate: 360 }}
-      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+      animate={{ 
+        rotate: 360,
+        transition: {
+          duration: 1,
+          repeat: Infinity,
+          ease: "linear",
+          repeatType: "loop"
+        }
+      }}
     />
   </div>
 );
@@ -265,9 +322,25 @@ const ImageGalleryModal = ({ images, currentIndex, setCurrentIndex, onClose }) =
 
   return (
     <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ 
+        opacity: 1, 
+        scale: 1,
+        transition: {
+          type: "spring",
+          stiffness: 300,
+          damping: 25
+        }
+      }}
+      exit={{ 
+        opacity: 0, 
+        scale: 0.95,
+        transition: {
+          type: "spring",
+          stiffness: 300,
+          damping: 25
+        }
+      }}
       className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
       onClick={handleBackgroundClick}  // Changed from onClick={onClose}
     >
@@ -427,7 +500,7 @@ const Navigation = ({ activeSection, setActiveSection, isMobile = false }) => {
   const navItems = [
     { id: 'summary', icon: User, label: 'Summary' },
     { id: 'film', icon: Film, label: 'Film Projects' },
-    { id: 'commercial', icon: Briefcase, label: 'Commercial Work' },
+    { id: 'commercial', icon: Tv, label: 'Commercial Work' },
     { id: 'experience', icon: Briefcase, label: 'Experience' },
     { id: 'skills', icon: Code, label: 'Skills' },
     { id: 'personal', icon: Clapperboard, label: 'Personal Projects' }
@@ -520,8 +593,12 @@ const ProjectCard = ({
       ref={ref}
       initial={{ opacity: 0, y: 50 }}
       animate={controls}
-      whileHover={{}}
-      transition={{ duration: 0.3 }}
+      whileHover={animationVariants.hover}
+      transition={{ 
+        type: "spring",
+        stiffness: 100,
+        damping: 20
+      }}
       className={`
         rounded-xl overflow-hidden border transition-all duration-300
         ${currentVariant.background} ${currentVariant.hover} ${className}
@@ -721,25 +798,18 @@ const ProjectCard = ({
 const SkillCard = ({ 
   title, 
   icon: Icon, 
-  skills, 
   description,
   tools,
-  projects
+  years
 }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [ref, isInView] = useInView({ threshold: 0.2 });
-
   return (
     <motion.div
-      ref={ref}
       initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="bg-white border border-gray-200 rounded-xl overflow-hidden"
     >
-      <motion.div
-        className="p-6 flex flex-col"
-      >
+      <div className="p-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
@@ -748,28 +818,19 @@ const SkillCard = ({
                 <Icon size={24} className="text-gray-600" />
               </div>
             )}
-            <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900">{title}</h3>
+              <p className="text-sm text-gray-500">{years} years experience</p>
+            </div>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="text-gray-500"
-          >
-            {isExpanded ? (
-              <Minimize size={20} />
-            ) : (
-              <Maximize size={20} />
-            )}
-          </motion.button>
         </div>
 
-        <p className="mt-2 text-gray-600">{description}</p>
+        {/* Description */}
+        <p className="mt-4 text-gray-600">{description}</p>
 
-        {/* Software/Tools Bubbles - Always Visible */}
+        {/* Tools */}
         {tools && (
           <div className="mt-4">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Tools & Software</h4>
             <div className="flex flex-wrap gap-2">
               {tools.map((tool, index) => (
                 <span
@@ -782,60 +843,7 @@ const SkillCard = ({
             </div>
           </div>
         )}
-
-        {/* Expanded Content */}
-        <AnimatePresence>
-          {isExpanded && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="mt-6 overflow-hidden"
-            >
-              {/* Skills Grid */}
-              <div className="grid grid-cols-1 gap-4">
-                {skills.map((skill, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="flex items-center space-x-2"
-                  >
-                    <div className="w-2 h-2 bg-gray-900 rounded-full" />
-                    <span className="text-gray-700">{skill}</span>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Related Projects */}
-              {projects && (
-                <div className="mt-6">
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">
-                    Related Projects
-                  </h4>
-                  <div className="grid gap-2">
-                    {projects.map((project, index) => (
-                      <motion.a
-                        key={index}
-                        href={project.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        <ChevronRight size={16} />
-                        <span>{project.name}</span>
-                      </motion.a>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.div>
+      </div>
     </motion.div>
   );
 };
@@ -850,9 +858,10 @@ const Section = ({ title, subtitle, children, className = '' }) => {
   return (
     <motion.section
       ref={ref}
-      initial={{ opacity: 0, y: 50 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-      transition={{ duration: 0.5 }}
+      variants={animationVariants.container}
+      initial="initial"
+      animate="animate"
+      exit="exit"
       className={`space-y-8 ${className}`}
     >
       <div className="space-y-2">
@@ -921,6 +930,8 @@ const App = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const playerRef = useRef(null);
 
   // Handle scroll behavior
   useEffect(() => {
@@ -943,6 +954,37 @@ const App = () => {
       clearTimeout(timer);
     };
   }, []);
+
+  // Add useEffect for initial play state and keyboard controls
+  useEffect(() => {
+    // Show play button initially, then switch to playing state after delay
+    const timer = setTimeout(() => {
+      setIsPlaying(true);
+    }, 1500); // 1.5 seconds delay
+
+    // Add keyboard listener for spacebar
+    const handleKeyPress = (e) => {
+      if (e.code === 'Space' && playerRef.current) {
+        e.preventDefault(); // Prevent page scroll
+        playerRef.current.getPaused().then(paused => {
+          if (paused) {
+            playerRef.current.play();
+            setIsPlaying(true);
+          } else {
+            playerRef.current.pause();
+            setIsPlaying(false);
+          }
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, []); // Empty dependency array means this runs once on mount
 
   // Define content data
   const experienceData = {
@@ -1137,10 +1179,10 @@ const App = () => {
       {
         title: "Compositor",
         duration: "PFX Studio | September 2024 - October 2024",
-        description: "Lead compositing work on the feature film Proud Princess.",
-        icon: Layers, // Changed from Film to Layers
+        description: "Compositing work on the feature film Proud Princess.",
+        icon: Layers,
         variant: 'featured',
-        technologies: ["Nuke", "DaVinci Resolve", "Mocha Pro"],
+        technologies: ["Nuke", ],
         moreInfo: (
           <div className="space-y-4">
             <h4 className="font-semibold text-lg mb-2">Key Achievements:</h4>
@@ -1156,9 +1198,9 @@ const App = () => {
         title: "Compositor",
         duration: "Incognito Studio | August 2021 - Present",
         description: "Compositor with experience in on-set supervision.",
-        icon: PenTool, // Changed from Code to PenTool
+        icon: PenTool,
         variant: 'default',
-        technologies: ["Nuke", "Python", "After Effects"],
+        technologies: ["Nuke",  "After Effects" ,  "Davinci Resolve",  ],
         moreInfo: (
           <div className="space-y-4">
             <p className="text-gray-700">
@@ -1172,7 +1214,9 @@ const App = () => {
         title: "Technical Director TD",
         duration: "Incognito Studio | January 2025 - Present",
         description: "Overseeing technical operations and pipeline development.",
-        icon: Settings, // Changed from Film to Settings
+        icon: Settings,
+        variant: 'default',
+        technologies: ["Ayon",  "OpenPype" ,  "Python",  ],
         moreInfo: (
           <div className="space-y-4">
             <h4 className="font-semibold text-lg mb-2">Responsibilities:</h4>
@@ -1188,109 +1232,104 @@ const App = () => {
         title: "Freelance Motion Graphic Designer",
         duration: "VIG Production | October 2023 - Present",
         description: "Created motion graphics for various client projects.",
-        icon: Monitor, // Changed from Film to Monitor
+        icon: Monitor,
+        variant: 'default',
+        technologies: ["After Effects", ],
         moreInfo: null
       },
       {
         title: "Freelance Nuke Compositor",
         duration: "Let it Roll Festival | July 2023 - August 2023",
         description: "Co-created a 5-minute opening sequence using Nuke and Nuke Studio.",
-        icon: Video, // Changed from Film to Video
+        icon: Video,
+        technologies: ["Nuke", "Nuke Studio"],
         moreInfo: null
+       
+      },
+      // Add education as the last item in experience array
+      {
+        title: "Bachelor's Degree in VFX and Animation",
+        duration: "The University of Creative Communication | 2021 - 2024",
+        description: "Specialized in Visual Effects and Motion Design with focus on compositing and creative development.",
+        icon: Award,
+        variant: 'featured',
+        technologies: ["VFX", "Motion Design", "Creative Development"],
+        moreInfo: (
+          <div className="space-y-4">
+            <h4 className="font-semibold text-lg mb-2">Key Focus Areas:</h4>
+            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+              <li>Visual Effects and Compositing</li>
+              <li>Motion Design Studies</li>
+              <li>Digital Art & Animation</li>
+              <li>History of Art</li>
+            </ul>
+            <motion.a
+              href="https://youtu.be/M6bm6yRKshA"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-700"
+              whileHover={{ scale: 1.05 }}
+            >
+              <span>View Bachelor Movie</span>
+              <ExternalLink size={16} />
+            </motion.a>
+          </div>
+        )
       }
-      // Add more roles as needed
     ],
     skills: [
       {
         title: "Compositing",
+        icon: Layers,
         description: "Advanced compositing with expertise in node-based and layer-based workflows.",
-        proficiency: null, // Removed proficiency bar for specific skills
-        skills: [
-          "Advanced Rotoscoping",
-          "Complex Node Setups",
-          "Color Grading",
-          "Shot Cleanup",
-          "3D Integration",
-          "Digital Matte Painting"
-        ],
+        years: 3,
         tools: [
           "Nuke",
           "After Effects",
           "DaVinci Resolve",
-          
-        ],
-        projects: [
-          { name: "Proud Princess", link: "https://example.com/proud-princess" },
-          { name: "Panasonic Campaign", link: "https://example.com/panasonic-campaign" }
         ]
       },
       {
         title: "Technical Direction",
+        icon: Settings,
         description: "Development of efficient pipelines and automation tools for VFX production.",
-        proficiency: null, // Removed proficiency bar for specific skills
-        skills: [
-          "Pipeline Architecture Design",
-          "Custom Tool Development",
-          "Workflow Automation",
-          "Technical Documentation",
-          "Render Farm Management",
-          "Quality Control Systems"
-        ],
+        years: 2,
         tools: [
           "Python",
           "Nuke Scripting",
-          
-        ],
-        projects: [
-          { name: "Rosa & Dara Pipeline", link: "https://example.com/rosa-dara-pipeline" },
-          { name: "Automated QC Tool", link: "https://example.com/automated-qc-tool" }
         ]
       },
       {
         title: "Motion Design",
+        icon: Video,
         description: "Creating engaging motion graphics and animations for various media.",
-        proficiency: null, // Removed proficiency bar for specific skills
-        skills: [
-          "2D and 3D Animation",
-          "Brand Identity Animation",
-          "Title Sequences",
-          "Animated Infographics",
-          "Visual Storytelling",
-          "Motion Typography"
-        ],
+        years: 3,
         tools: [
           "Adobe After Effects",
           "Blender",
           "Adobe Premiere Pro",
-          
-        ],
-        projects: [
-          { name: "Corporate Branding", link: "https://example.com/corporate-branding" },
-          { name: "Animated Infographics", link: "https://example.com/animated-infographics" }
+        ]
+      },
+      {
+        title: "VJing",
+        icon: Monitor,
+        description: "Live visual performance and real-time content creation.",
+        years: 2,
+        tools: [
+          "Resolume Arena",
+          "TouchDesigner",
+          "Ableton Live"
         ]
       },
       {
         title: "Creative Development",
-        description: "Pushing boundaries with experimental techniques and live visual performance.",
-        proficiency: null, // Removed proficiency bar for specific skills
-        skills: [
-          "Real-time Visual Performance",
-          "Interactive Installations",
-          "Experimental Animation Techniques",
-          "Digital Art Creation",
-          "VJing",
-          "TouchDesigner"
-        ],
+        icon: Code,
+        description: "Creating interactive experiences and creative coding projects.",
+        years: 2,
         tools: [
-          "Resolume Arena",
-          "TouchDesigner",
           "Processing",
           "Max/MSP",
-          "Ableton Live"
-        ],
-        projects: [
-          { name: "Live VJ Toolkit", link: "https://example.com/live-vj-toolkit" },
-          { name: "Interactive Installations", link: "https://example.com/interactive-installations" }
+          "TouchDesigner"
         ]
       }
     ]
@@ -1298,21 +1337,44 @@ const App = () => {
 
   const personalProjects = [
     {
-      id: 'bachelor-movie',
-      title: "Bachelor Movie",
-      description: "A unique fusion of 3D animation, AI, and analog techniques creating a distinctive narrative experience.",
+      id: 'bachelor-thesis',
+      title: "Bachelor Thesis - Experimental Film",
+      description: "An experimental film exploring the intersection of digital and analog techniques, created as my bachelor thesis project.",
+      icon: Clapperboard,
+      variant: 'featured',
+      technologies: ["Nuke", "After Effects", "Analog Photography", "Experimental Techniques"],
       moreInfo: (
         <div className="space-y-4">
-          <motion.a
-            href="https://youtu.be/M6bm6yRKshA"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-700"
-            whileHover={{ scale: 1.05 }}
-          >
-            <span>Watch on YouTube</span>
-            <ExternalLink size={16} />
-          </motion.a>
+          {/* Video Player */}
+          <div className="relative aspect-video rounded-lg overflow-hidden">
+            <iframe
+              src="https://www.youtube.com/embed/M6bm6yRKshA?rel=0"
+              title="Bachelor Thesis Film"
+              className="absolute inset-0 w-full h-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          
+          <p className="text-gray-700">
+            This experimental film combines digital compositing techniques with analog photography 
+            and glitch art to create a unique visual experience that explores the boundaries 
+            between traditional and modern mediums.
+          </p>
+          
+          <div className="flex space-x-4">
+            <motion.a
+              href="https://youtu.be/M6bm6yRKshA"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center space-x-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Play size={16} />
+              <span>Watch Film</span>
+            </motion.a>
+          </div>
         </div>
       ),
       alwaysExpanded: true
@@ -1320,9 +1382,15 @@ const App = () => {
     {
       id: 'nuke-grab-tool',
       title: "Nuke Grab Tool",
-      description: "Implemented the Blender Grab Tool within Nuke, enhancing node movement capabilities.",
+      description: "A Python script that implements Blender-style grab functionality in Nuke.",
+      icon: Settings,
+      variant: 'default',
+      technologies: ["Python", "Nuke API", "Node Graph Tools"],
       moreInfo: (
         <div className="space-y-4">
+          <p className="text-gray-700">
+            Enhanced Nuke's node graph manipulation capabilities by implementing Blender's intuitive grab tool functionality.
+          </p>
           <motion.a
             href="http://www.nukepedia.com/python/nodegraph/nuke-grab-tool"
             target="_blank"
@@ -1330,30 +1398,34 @@ const App = () => {
             className="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-700"
             whileHover={{ scale: 1.05 }}
           >
-            <span>View the tool on Nukepedia</span>
+            <span>View on Nukepedia</span>
             <ExternalLink size={16} />
           </motion.a>
-          <p className="text-gray-700">
-            This script implements the entire Blender Grab Tool within Nuke, bringing its
-            full node movement capabilities to your compositing workflow.
-          </p>
         </div>
       ),
       alwaysExpanded: true
     },
     {
       id: 'glitch-art',
-      title: "Glitch Art",
-      description: "Experimental glitch art created through various digital manipulation techniques.",
+      title: "Glitch Art Experiments",
+      description: "A series of experimental digital artworks exploring data corruption and visual glitches.",
+      icon: Sparkles,
+      variant: 'default',
       media: glitchImages,
       mediaType: "image",
+      technologies: ["Digital Manipulation", "Custom Processing", "Data Moshing"],
       moreInfo: (
         <div className="space-y-4">
-          <h4 className="font-semibold text-lg">Techniques:</h4>
+          <p className="text-gray-700">
+            An ongoing exploration of digital artifacts and glitch aesthetics through various techniques 
+            including data manipulation, signal processing, and custom algorithms.
+          </p>
+          <h4 className="font-semibold text-lg">Techniques Used:</h4>
           <ul className="list-disc pl-5 space-y-2 text-gray-700">
             <li>Digital signal manipulation</li>
             <li>Data moshing</li>
             <li>Custom processing algorithms</li>
+            <li>File format exploitation</li>
           </ul>
         </div>
       ),
@@ -1362,16 +1434,24 @@ const App = () => {
     {
       id: 'analog-photography',
       title: "Analog Photography",
-      description: "Capturing moments through analog lenses and developing alternative film processes.",
+      description: "A collection of film photographs exploring traditional photographic processes.",
+      icon: Camera,
+      variant: 'default',
       media: analogImages,
       mediaType: "image",
+      technologies: ["35mm Film", "Medium Format", "Darkroom Development"],
       moreInfo: (
         <div className="space-y-4">
-          <h4 className="font-semibold text-lg">Process:</h4>
+          <p className="text-gray-700">
+            A personal exploration of analog photography, combining traditional techniques with 
+            experimental processes to create unique visual narratives.
+          </p>
+          <h4 className="font-semibold text-lg">Process & Techniques:</h4>
           <ul className="list-disc pl-5 space-y-2 text-gray-700">
-            <li>Film photography using various camera models</li>
-            <li>Darkroom development techniques</li>
-            <li>Creative photo manipulation</li>
+            <li>Film photography using various formats</li>
+            <li>Manual darkroom development</li>
+            <li>Alternative processing techniques</li>
+            <li>Cross-processing experiments</li>
           </ul>
         </div>
       ),
@@ -1397,14 +1477,63 @@ const App = () => {
               {/* Hero Video/Showreel */}
               <motion.div
                 variants={animationVariants.item}
-                className="relative aspect-video rounded-xl overflow-hidden shadow-lg"
+                className="relative aspect-video rounded-xl overflow-hidden shadow-lg group"
               >
+                <motion.button
+                  className="absolute inset-0 z-10 flex items-center justify-center transition-colors duration-300"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const iframe = e.currentTarget.nextElementSibling;
+                    if (!playerRef.current) {
+                      playerRef.current = new Player(iframe);
+                    }
+                    
+                    playerRef.current.getPaused().then(paused => {
+                      if (paused) {
+                        playerRef.current.play();
+                        setIsPlaying(true);
+                      } else {
+                        playerRef.current.pause();
+                        setIsPlaying(false);
+                      }
+                    });
+                  }}
+                >
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
+                  <AnimatePresence mode="wait">
+                    {isPlaying ? (
+                      <motion.div
+                        key="pause"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="hidden group-hover:flex text-white"
+                      >
+                        <Pause size={48} />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="play"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="hidden group-hover:flex text-white"
+                      >
+                        <Play size={48} />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+                
                 <iframe
-                  src="https://player.vimeo.com/video/1016090207"
+                  src="https://player.vimeo.com/video/1016090207?autoplay=1&loop=1&background=1&quality=1080p&muted=1"
                   className="absolute inset-0 w-full h-full"
+                  frameBorder="0"
                   allow="autoplay; fullscreen; picture-in-picture"
                   allowFullScreen
-                  title="Showreel"
+                  title="Showreel 2024"
                 />
               </motion.div>
 
@@ -1415,24 +1544,92 @@ const App = () => {
                 variants={animationVariants.item}
                 className="prose prose-lg max-w-none"
               >
-                <p>
-                  <strong>I'm a passionate VFX Artist and Motion Designer based in Prague</strong>, 
-                  specializing in creating seamless visual effects and compelling motion graphics.
-                  With over <strong>three years of experience</strong> in the industry, I've contributed to
-                  various high-profile projects ranging from feature films to commercial campaigns.
-                </p>
-                <p>
-                  My expertise spans across:
-                </p>
-                <ul>
-                  <li><strong>Nuke compositing</strong></li>
-                  <li><strong>Pipeline development</strong></li>
-                  <li><strong>Motion design</strong></li>
-                </ul>
-                <p>
-                  I'm particularly passionate about exploring the intersection
-                  of traditional techniques and cutting-edge technology.
-                </p>
+                {/* Hero Text */}
+                <h1 className="text-4xl font-bold bg-gradient-to-r from-black to-gray-700 bg-clip-text text-transparent mb-6">
+                  VFX Artist & Motion Designer
+                </h1>
+
+                {/* Introduction */}
+                <div className="text-lg leading-relaxed space-y-6">
+                  <p className="text-gray-800">
+                    <span className="font-semibold">I'm a Mid-Level Compositor and Technical Director specializing in high-end visual effects.</span> 
+                    Based in Prague, I focus on crafting seamless compositing solutions and developing efficient pipelines 
+                    that elevate visual storytelling. Currently working with <span className="font-semibold">Incognito Studio and PFX Studio</span>, 
+                    I've contributed to major projects including "<span className="italic">Proud Princess</span>" and 
+                    "<span className="italic">Rosa & Dara a jejich velké letní dobrodružství</span>", a 3D feature film 
+                    blending 2D and 3D animation.
+                  </p>
+
+                  {/* Core Expertise */}
+                  <div className="mt-8">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-4">Core Expertise</h2>
+                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 list-none pl-0">
+                      {/* Primary Skills */}
+                      <li className="col-span-full flex items-center space-x-3 p-4 bg-white rounded-xl border-2 border-black shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <div className="p-2 bg-black rounded-lg">
+                          <Layers className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <span className="font-semibold block text-gray-900">Advanced Compositing</span>
+                          <span className="text-sm text-gray-600">Expert in Nuke with strong focus on feature film VFX</span>
+                        </div>
+                      </li>
+
+                      <li className="col-span-full flex items-center space-x-3 p-4 bg-white rounded-xl border-2 border-black shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <div className="p-2 bg-black rounded-lg">
+                          <Code className="w-6 h-6 text-white" />
+                        </div>
+                        <div>
+                          <span className="font-semibold block text-gray-900">Technical Direction</span>
+                          <span className="text-sm text-gray-600">Pipeline development & Python automation for VFX workflows</span>
+                        </div>
+                      </li>
+
+                      {/* Secondary Skills */}
+                      <li className="flex items-center space-x-3 p-4 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <div className="p-2 bg-black/5 rounded-lg">
+                          <Video className="w-6 h-6 text-gray-800" />
+                        </div>
+                        <div>
+                          <span className="font-semibold block text-gray-900">Motion Design</span>
+                          <span className="text-sm text-gray-600">Supporting skill for commercial projects</span>
+                        </div>
+                      </li>
+
+                      <li className="flex items-center space-x-3 p-4 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
+                        <div className="p-2 bg-black/5 rounded-lg">
+                          <Settings className="w-6 h-6 text-gray-800" />
+                        </div>
+                        <div>
+                          <span className="font-semibold block text-gray-900">Pipeline Tools</span>
+                          <span className="text-sm text-gray-600">Custom tool development for Nuke</span>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+
+                  {/* Professional Experience Highlight */}
+                  <p className="text-gray-800">
+                    My professional portfolio includes VFX compositing for clients such as <span className="font-semibold">Panasonic Japan, 
+                    Moneta Bank, and McDonald's</span>, as well as VFX supervision for the Creditas project. I've also contributed to the 
+                    Let it Roll Festival, compositing a 5-minute opening sequence, and work as a freelance Motion Graphic Designer with 
+                    VIG Production.
+                  </p>
+
+                  {/* Technical Skills & Interests */}
+                  <p className="text-gray-800">
+                    Beyond my core expertise in Nuke compositing and pipeline development, I explore experimental animation, glitch art, 
+                    and the fusion of analog and digital media. I'm also experienced in VJing using Resolume Arena and TouchDesigner, 
+                    constantly pushing the boundaries of visual storytelling.
+                  </p>
+
+                  {/* Closing Statement */}
+                  <p className="text-gray-800 mt-8 text-lg italic border-l-4 border-black pl-4">
+                    I'm always eager to learn and grow, having attended conferences like FMX and Anifilm. Currently open to new opportunities 
+                    and willing to relocate to the Canary Islands, I combine technical expertise with creative vision to deliver exceptional 
+                    visual effects solutions.
+                  </p>
+                </div>
               </motion.div>
 
               {/* Quick Stats */}
@@ -1521,7 +1718,7 @@ const App = () => {
               variants={animationVariants.container}
               initial="hidden"
               animate="show"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+              className="grid grid-cols-2 lg:grid-cols-3 gap-4"
             >
               {experienceData.commercial.map((project, index) => (
                 <motion.div
@@ -1529,28 +1726,17 @@ const App = () => {
                   variants={animationVariants.item}
                   className="bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all duration-200 p-4"
                 >
-                  {/* Project Header */}
-                  <h3 className="text-base font-semibold text-gray-900 mb-2">{project.title}</h3>
+                  {/* Added Circle */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-3 h-3 md:w-4 md:h-4 bg-black rounded-full flex-shrink-0" />
+                    <h3 className="text-sm md:text-base font-semibold text-gray-900 line-clamp-1">{project.title}</h3>
+                  </div>
                   
                   {/* Duration */}
                   <p className="text-xs text-gray-500 mb-2">{project.duration}</p>
                   
                   {/* Description - Limited to 2 lines */}
-                  <p className="text-sm text-gray-600 line-clamp-2 mb-3">{project.description}</p>
-                  
-                  {/* Technologies */}
-                  {project.technologies && (
-                    <div className="flex flex-wrap gap-1.5 mt-auto">
-                      {project.technologies.map((tech, techIndex) => (
-                        <span
-                          key={techIndex}
-                          className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs whitespace-nowrap"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mb-3">{project.description}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -1566,7 +1752,62 @@ const App = () => {
             <div className="space-y-12">
               {/* Main Skills */}
               <div className="grid grid-cols-1 gap-6">
-                {experienceData.skills.map((skill, index) => (
+                {[
+                  {
+                    title: "Compositing",
+                    icon: Layers,
+                    description: "Advanced compositing with expertise in node-based and layer-based workflows.",
+                    years: 3,
+                    tools: [
+                      "Nuke",
+                      "After Effects",
+                      "DaVinci Resolve",
+                    ]
+                  },
+                  {
+                    title: "Technical Direction",
+                    icon: Settings,
+                    description: "Development of efficient pipelines and automation tools for VFX production.",
+                    years: 2,
+                    tools: [
+                      "Python",
+                      "Nuke Scripting",
+                    ]
+                  },
+                  {
+                    title: "Motion Design",
+                    icon: Video,
+                    description: "Creating engaging motion graphics and animations for various media.",
+                    years: 3,
+                    tools: [
+                      "Adobe After Effects",
+                      "Blender",
+                      "Adobe Premiere Pro",
+                    ]
+                  },
+                  {
+                    title: "VJing",
+                    icon: Monitor,
+                    description: "Live visual performance and real-time content creation.",
+                    years: 2,
+                    tools: [
+                      "Resolume Arena",
+                      "TouchDesigner",
+                      "Ableton Live"
+                    ]
+                  },
+                  {
+                    title: "Creative Development",
+                    icon: Code,
+                    description: "Creating interactive experiences and creative coding projects.",
+                    years: 2,
+                    tools: [
+                      "Processing",
+                      "Max/MSP",
+                      "TouchDesigner"
+                    ]
+                  }
+                ].map((skill, index) => (
                   <SkillCard
                     key={index}
                     {...skill}
@@ -1692,19 +1933,19 @@ const App = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            transition={{ delay: 0.2, duration: 0.3 }}
             className="mb-6"
           >
-            <div className="relative w-20 h-20 mb-4">
+            <div className="relative w-20 h-20 mb-4 group">
               <img
                 src={profilePicture}
                 alt="Profile"
                 className="rounded-full object-cover w-full h-full"
               />
-              <motion.div
+              <div
                 className="absolute -inset-0.5 rounded-full bg-gradient-to-r 
-                  from-black to-gray-600 opacity-0"
-                whileHover={{ opacity: 0.2 }}
+                  from-black to-gray-600 opacity-0 group-hover:opacity-20 
+                  transition-opacity duration-200"
               />
             </div>
             <h2 className="text-2xl font-bold text-gray-900">Martin Tomek</h2>
@@ -1867,17 +2108,5 @@ const App = () => {
     </div>
   );
 };
-
-// ====================
-// Component: SkillCard
-// ====================
-
-// Note: Moved the SkillCard component above the App component for clarity
-
-// ====================
-// Component: ProjectCard
-// ====================
-
-// Note: Moved the ProjectCard component above the App component for clarity
 
 export default App;
