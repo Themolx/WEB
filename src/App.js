@@ -17,16 +17,11 @@ import {
   X,
   ExternalLink,
   ChevronRight,
-  Camera,
-  Palette,
-  Terminal,
-  Monitor,
-  Maximize,
-  Minimize,
-  Menu,
-  Image as ImageIcon,
   Play,
-  ChevronUp
+  ChevronUp,
+  Menu,
+  Maximize,
+  Minimize
 } from 'lucide-react';
 
 // ====================
@@ -409,6 +404,7 @@ const Navigation = ({ activeSection, setActiveSection, isMobile = false }) => {
     </nav>
   );
 };
+
 // ====================
 // Component: ProjectCard
 // ====================
@@ -426,13 +422,13 @@ const ProjectCard = ({
   icon: Icon,
   variant = 'default',
   videoUrl,
-  category,
+  category, // Added category prop
   studio, // New prop for studio information
   alwaysExpanded = false // New prop with default value
 }) => {
-  // Initialize isExpanded based on alwaysExpanded and variant
+  // Initialize isExpanded based on alwaysExpanded and category
   const [isExpanded, setIsExpanded] = useState(
-    alwaysExpanded ? true : (variant !== 'commercial' ? false : true)
+    alwaysExpanded && category !== 'Film'
   );
   const [showGallery, setShowGallery] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
@@ -467,14 +463,14 @@ const ProjectCard = ({
   const currentVariant = variants[variant];
 
   // Determine if the card can be expanded
-  const canExpand = !alwaysExpanded && variant !== 'commercial';
+  const canExpand = !alwaysExpanded && category !== 'Commercial';
 
   return (
     <motion.div
       ref={ref}
       initial={{ opacity: 0, y: 50 }}
       animate={controls}
-      whileHover={{ /* Removed y animation */ }}
+      whileHover={{}} // Removed y animation
       transition={{ duration: 0.3 }}
       className={`
         rounded-xl overflow-hidden border transition-all duration-300
@@ -482,7 +478,7 @@ const ProjectCard = ({
         cursor-pointer
       `}
       onClick={() => {
-        if (canExpand) { // Only toggle if expandable
+        if (canExpand) {
           setIsExpanded(!isExpanded);
         }
       }}
@@ -522,7 +518,7 @@ const ProjectCard = ({
             </div>
           </div>
           
-          {/* Toggle Button */}
+          {/* Toggle Button - Removed for Commercials */}
           {canExpand && (
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -572,7 +568,7 @@ const ProjectCard = ({
 
         {/* Expanded Content */}
         <AnimatePresence>
-          {isExpanded && variant !== 'commercial' && (
+          {isExpanded && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -668,7 +664,6 @@ const ProjectCard = ({
   );
 };
 
-
 // ====================
 // Component: SkillCard
 // ====================
@@ -678,9 +673,8 @@ const SkillCard = ({
   icon: Icon, 
   skills, 
   description,
-  proficiency,
-  projects,
-  tools
+  tools,
+  projects
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [ref, isInView] = useInView({ threshold: 0.2 });
@@ -694,8 +688,7 @@ const SkillCard = ({
       className="bg-white border border-gray-200 rounded-xl overflow-hidden"
     >
       <motion.div
-        className="p-6 cursor-pointer"
-        onClick={() => setIsExpanded(!isExpanded)}
+        className="p-6 flex flex-col"
       >
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -710,6 +703,7 @@ const SkillCard = ({
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
+            onClick={() => setIsExpanded(!isExpanded)}
             className="text-gray-500"
           >
             {isExpanded ? (
@@ -721,6 +715,23 @@ const SkillCard = ({
         </div>
 
         <p className="mt-2 text-gray-600">{description}</p>
+
+        {/* Software/Tools Bubbles - Always Visible */}
+        {tools && (
+          <div className="mt-4">
+            <h4 className="text-sm font-medium text-gray-700 mb-2">Tools & Software</h4>
+            <div className="flex flex-wrap gap-2">
+              {tools.map((tool, index) => (
+                <span
+                  key={index}
+                  className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
+                >
+                  {tool}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Expanded Content */}
         <AnimatePresence>
@@ -748,25 +759,6 @@ const SkillCard = ({
                 ))}
               </div>
 
-              {/* Tools Section */}
-              {tools && (
-                <div className="mt-6">
-                  <h4 className="text-sm font-medium text-gray-700 mb-3">
-                    Tools & Software
-                  </h4>
-                  <div className="flex flex-wrap gap-2">
-                    {tools.map((tool, index) => (
-                      <span
-                        key={index}
-                        className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
-                      >
-                        {tool}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* Related Projects */}
               {projects && (
                 <div className="mt-6">
@@ -781,7 +773,7 @@ const SkillCard = ({
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center space-x-2 text-gray-600 hover:text-gray-900"
-                        whileHover={{ scale: 1.05 }} // Simplified hover
+                        whileHover={{ scale: 1.05 }}
                       >
                         <ChevronRight size={16} />
                         <span>{project.name}</span>
@@ -965,58 +957,156 @@ const App = () => {
     ],
     commercial: [
       {
-        title: "Panasonic Japan Campaign",
-        description: "Supervised and executed VFX for major product launch campaign.",
-        duration: "July 2023 - August 2023",
-        icon: Briefcase,
-        variant: 'default',
-        technologies: ["Nuke", "After Effects"],
-        details: (
-          <div className="space-y-4">
-            <p>
-              Supervised the VFX team for Panasonic's Japan product launch, ensuring high-quality visual effects integration.
-            </p>
-            <ul className="list-disc pl-5">
-              <li>Managed VFX team workflow</li>
-              <li>Collaborated with creative directors</li>
-              <li>Optimized rendering processes</li>
-            </ul>
-          </div>
-        ),
-        media: commercialImages,
-        mediaType: 'image',
-        link: 'https://example.com/panasonic-campaign'
-      },
-      {
-        title: "McDonald's Promotional Video",
-        description: "Created engaging VFX for McDonald's latest promotional campaign.",
-        duration: "May 2023 - June 2023",
-        icon: Briefcase,
-        variant: 'default',
-        technologies: ["Nuke", "After Effects"],
-        details: null, // Non-expandable
-        media: [
-          'https://via.placeholder.com/800x600.png?text=McDonald\'s+1',
-          'https://via.placeholder.com/800x600.png?text=McDonald\'s+2'
-        ],
-        mediaType: 'image',
-        link: 'https://example.com/mcdonalds-promo'
-      },
-      {
-        title: "T-Mobile Branding",
-        description: "Developed visual effects for T-Mobile's new branding initiative.",
-        duration: "March 2023 - April 2023",
-        icon: Briefcase,
-        variant: 'default',
-        technologies: ["Nuke", "After Effects"],
-        details: null, // Non-expandable
-        media: [
-          'https://via.placeholder.com/800x600.png?text=T-Mobile+1',
-          'https://via.placeholder.com/800x600.png?text=T-Mobile+2'
-        ],
-        mediaType: 'image',
-        link: 'https://example.com/tmobile-branding'
-      },
+    title: "Panasonic Japan",
+    description: "Led VFX and compositing for international product launch campaign.",
+    duration: "2023",
+    icon: Briefcase,
+    variant: 'default',
+    technologies: ["Nuke", "After Effects", "DaVinci Resolve"],
+    details: null, // Non-expandable for commercial work
+    media: [
+      'https://via.placeholder.com/800x600.png?text=Panasonic+Campaign+1',
+      'https://via.placeholder.com/800x600.png?text=Panasonic+Campaign+2'
+    ],
+    mediaType: 'image',
+    link: '#'
+  },
+  {
+    title: "Moneta Bank",
+    description: "Created visual effects and motion graphics for banking service advertisements.",
+    duration: "2023",
+    icon: Briefcase,
+    variant: 'default',
+    technologies: ["Nuke", "After Effects"],
+    details: null,
+    media: [
+      'https://via.placeholder.com/800x600.png?text=Moneta+Bank+1',
+      'https://via.placeholder.com/800x600.png?text=Moneta+Bank+2'
+    ],
+    mediaType: 'image',
+    link: '#'
+  },
+  {
+    title: "McDonald's",
+    description: "Developed dynamic motion graphics and VFX for promotional campaigns.",
+    duration: "2023",
+    icon: Briefcase,
+    variant: 'default',
+    technologies: ["Nuke", "After Effects"],
+    details: null,
+    media: [
+      'https://via.placeholder.com/800x600.png?text=McDonalds+1',
+      'https://via.placeholder.com/800x600.png?text=McDonalds+2'
+    ],
+    mediaType: 'image',
+    link: '#'
+  },
+  {
+    title: "T-Mobile",
+    description: "Created visual effects for brand campaigns and product launches.",
+    duration: "2023",
+    icon: Briefcase,
+    variant: 'default',
+    technologies: ["Nuke", "After Effects"],
+    details: null,
+    media: [
+      'https://via.placeholder.com/800x600.png?text=T-Mobile+1',
+      'https://via.placeholder.com/800x600.png?text=T-Mobile+2'
+    ],
+    mediaType: 'image',
+    link: '#'
+  },
+  {
+    title: "O2",
+    description: "Delivered motion graphics and visual effects for telecommunications campaigns.",
+    duration: "2023",
+    icon: Briefcase,
+    variant: 'default',
+    technologies: ["Nuke", "After Effects"],
+    details: null,
+    media: [
+      'https://via.placeholder.com/800x600.png?text=O2+1',
+      'https://via.placeholder.com/800x600.png?text=O2+2'
+    ],
+    mediaType: 'image',
+    link: '#'
+  },
+  {
+    title: "Ketoknoflik",
+    description: "Produced engaging visual content and effects for brand communication.",
+    duration: "2023",
+    icon: Briefcase,
+    variant: 'default',
+    technologies: ["Nuke", "After Effects"],
+    details: null,
+    media: [
+      'https://via.placeholder.com/800x600.png?text=Ketoknoflik+1',
+      'https://via.placeholder.com/800x600.png?text=Ketoknoflik+2'
+    ],
+    mediaType: 'image',
+    link: '#'
+  },
+  {
+    title: "PSS",
+    description: "Developed visual effects and motion graphics for corporate communications.",
+    duration: "2023",
+    icon: Briefcase,
+    variant: 'default',
+    technologies: ["Nuke", "After Effects"],
+    details: null,
+    media: [
+      'https://via.placeholder.com/800x600.png?text=PSS+1',
+      'https://via.placeholder.com/800x600.png?text=PSS+2'
+    ],
+    mediaType: 'image',
+    link: '#'
+  },
+  {
+    title: "7energy",
+    description: "Created dynamic visual content for energy drink marketing campaigns.",
+    duration: "2023",
+    icon: Briefcase,
+    variant: 'default',
+    technologies: ["Nuke", "After Effects"],
+    details: null,
+    media: [
+      'https://via.placeholder.com/800x600.png?text=7energy+1',
+      'https://via.placeholder.com/800x600.png?text=7energy+2'
+    ],
+    mediaType: 'image',
+    link: '#'
+  },
+  {
+    title: "Billa",
+    description: "Delivered visual effects and motion graphics for retail advertising.",
+    duration: "2023",
+    icon: Briefcase,
+    variant: 'default',
+    technologies: ["Nuke", "After Effects"],
+    details: null,
+    media: [
+      'https://via.placeholder.com/800x600.png?text=Billa+1',
+      'https://via.placeholder.com/800x600.png?text=Billa+2'
+    ],
+    mediaType: 'image',
+    link: '#'
+  },
+  {
+    title: "Epet",
+    description: "Created visual content for pet supply retailer marketing campaigns.",
+    duration: "2023",
+    icon: Briefcase,
+    variant: 'default',
+    technologies: ["Nuke", "After Effects"],
+    details: null,
+    media: [
+      'https://via.placeholder.com/800x600.png?text=Epet+1',
+      'https://via.placeholder.com/800x600.png?text=Epet+2'
+    ],
+    mediaType: 'image',
+    link: '#'
+  },
+
       // Add more commercial projects as needed
     ],
     experience: [
@@ -1024,6 +1114,7 @@ const App = () => {
         title: "Compositor",
         duration: "PFX Studio | September 2024 - October 2024",
         description: "Lead compositing work on the feature film Proud Princess.",
+        icon: Film,  // Add icon
         moreInfo: (
           <div className="space-y-4">
             <h4 className="font-semibold text-lg mb-2">Key Achievements:</h4>
@@ -1036,32 +1127,24 @@ const App = () => {
         )
       },
       {
-        title: "VFX Supervisor",
+        title: "Compositor",
         duration: "Incognito Studio | August 2021 - Present",
-        description: "Provided VFX services for various high-profile clients.",
+        description: "Compositor with experience in on-set supervision.",
+        icon: Film,  // Add icon
         moreInfo: (
           <div className="space-y-4">
-            <h4 className="font-semibold text-lg mb-2">Clients:</h4>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              {['Panasonic Japan', 'Moneta Bank', 'McDonald\'s', 'Ketoknoflik', 'PSS', 'T-Mobile', 'O2', '7energy', 'Billa', 'Epet'].map((client, index) => (
-                <div key={index} className="bg-gray-100 rounded-lg p-4 flex items-center justify-center text-xs">
-                  <span className="text-gray-700">{client}</span>
-                </div>
-              ))}
-            </div>
-            <p className="text-gray-700 mt-4">
-              VFX Supervisor for the Creditas project.
-            </p>
             <p className="text-gray-700">
-              Working on "Rosa & Dara a jejich velké letní dobrodružství", a 3D feature film.
+              Worked as a compositor at Incognito Studio, contributing to various high-profile projects.
+              Gained valuable experience in on-set supervision, ensuring seamless integration of VFX elements.
             </p>
           </div>
         )
       },
       {
-        title: "Technical Director TD", // New Role Added
+        title: "Technical Director TD",
         duration: "Incognito Studio | January 2025 - Present",
         description: "Overseeing technical operations and pipeline development.",
+        icon: Film,  // Add icon
         moreInfo: (
           <div className="space-y-4">
             <h4 className="font-semibold text-lg mb-2">Responsibilities:</h4>
@@ -1077,12 +1160,14 @@ const App = () => {
         title: "Freelance Motion Graphic Designer",
         duration: "VIG Production | October 2023 - Present",
         description: "Created motion graphics for various client projects.",
+        icon: Film,  // Add icon
         moreInfo: null
       },
       {
         title: "Freelance Nuke Compositor",
         duration: "Let it Roll Festival | July 2023 - August 2023",
         description: "Co-created a 5-minute opening sequence using Nuke and Nuke Studio.",
+        icon: Film,  // Add icon
         moreInfo: null
       }
       // Add more roles as needed
@@ -1104,8 +1189,7 @@ const App = () => {
           "Nuke",
           "After Effects",
           "DaVinci Resolve",
-          "Mocha Pro",
-          "Silhouette"
+          
         ],
         projects: [
           { name: "Proud Princess", link: "https://example.com/proud-princess" },
@@ -1127,9 +1211,7 @@ const App = () => {
         tools: [
           "Python",
           "Nuke Scripting",
-          "Perforce",
-          "JIRA",
-          "Git"
+          
         ],
         projects: [
           { name: "Rosa & Dara Pipeline", link: "https://example.com/rosa-dara-pipeline" },
@@ -1152,7 +1234,7 @@ const App = () => {
           "Adobe After Effects",
           "Blender",
           "Adobe Premiere Pro",
-          "Apple Motion"
+          
         ],
         projects: [
           { name: "Corporate Branding", link: "https://example.com/corporate-branding" },
@@ -1183,16 +1265,6 @@ const App = () => {
           { name: "Interactive Installations", link: "https://example.com/interactive-installations" }
         ]
       }
-    ],
-    softwareProficiency: [
-      { name: "Nuke", proficiency: 90 },
-      { name: "After Effects", proficiency: 85 },
-      { name: "DaVinci Resolve", proficiency: 80 },
-      { name: "Blender", proficiency: 75 },
-      { name: "Python", proficiency: 85 },
-      { name: "TouchDesigner", proficiency: 75 },
-      { name: "Resolume Arena", proficiency: 70 }
-      // Add more software as needed
     ]
   };
 
@@ -1308,20 +1380,29 @@ const App = () => {
                 />
               </motion.div>
 
+
+
               {/* Introduction */}
               <motion.div
                 variants={animationVariants.item}
                 className="prose prose-lg max-w-none"
               >
                 <p>
-                  I'm a passionate VFX Artist and Motion Designer based in Prague, 
+                  <strong>I'm a passionate VFX Artist and Motion Designer based in Prague</strong>, 
                   specializing in creating seamless visual effects and compelling motion graphics.
-                  With over three years of experience in the industry, I've contributed to
+                  With over <strong>three years of experience</strong> in the industry, I've contributed to
                   various high-profile projects ranging from feature films to commercial campaigns.
                 </p>
                 <p>
-                  My expertise spans across Nuke compositing, pipeline development, and 
-                  motion design. I'm particularly passionate about exploring the intersection
+                  My expertise spans across:
+                </p>
+                <ul>
+                  <li><strong>Nuke compositing</strong></li>
+                  <li><strong>Pipeline development</strong></li>
+                  <li><strong>Motion design</strong></li>
+                </ul>
+                <p>
+                  I'm particularly passionate about exploring the intersection
                   of traditional techniques and cutting-edge technology.
                 </p>
               </motion.div>
@@ -1412,37 +1493,44 @@ const App = () => {
               variants={animationVariants.container}
               initial="hidden"
               animate="show"
-              className="space-y-6"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
             >
               {experienceData.commercial.map((project, index) => (
-                <ProjectCard
+                <motion.div
                   key={index}
-                  {...project}
-                  icon={Briefcase}
-                  category="Commercial"
-                />
+                  variants={animationVariants.item}
+                  className="bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all duration-200 p-4"
+                >
+                  {/* Project Header */}
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-base font-semibold text-gray-900">{project.title}</h3>
+                    {project.icon && (
+                      <project.icon className="w-4 h-4 text-gray-400 flex-shrink-0 ml-2" />
+                    )}
+                  </div>
+
+                  {/* Duration */}
+                  <p className="text-xs text-gray-500 mb-2">{project.duration}</p>
+
+                  {/* Description - Limited to 2 lines */}
+                  <p className="text-sm text-gray-600 line-clamp-2 mb-3">{project.description}</p>
+
+                  {/* Technologies */}
+                  {project.technologies && (
+                    <div className="flex flex-wrap gap-1.5 mt-auto">
+                      {project.technologies.map((tech, techIndex) => (
+                        <span
+                          key={techIndex}
+                          className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs whitespace-nowrap"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
               ))}
             </motion.div>
-
-            {/* Client Logos - Smaller */}
-            <div className="mt-12">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Clients</h3>
-              <p className="text-sm text-gray-500 mb-4">Incognito Studio</p>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {['Panasonic', 'McDonald\'s', 'T-Mobile', 'O2', 'Moneta Bank', 'Ketoknoflik', 'PSS', '7energy', 'Billa', 'Epet'].map((client, index) => (
-                  <motion.div
-                    key={index}
-                    variants={animationVariants.item}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center text-xs"
-                  >
-                    <span className="text-gray-600">{client}</span>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
           </Section>
         );
 
@@ -1462,35 +1550,6 @@ const App = () => {
                   />
                 ))}
               </div>
-
-              {/* Software Proficiency */}
-              <div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-6">Software Proficiency</h3>
-                <div className="grid grid-cols-1 gap-6">
-                  {experienceData.softwareProficiency.map((software, index) => (
-                    <motion.div
-                      key={index}
-                      variants={animationVariants.item}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      className="bg-white p-4 rounded-lg border border-gray-200"
-                    >
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-medium">{software.name}</span>
-                        <span className="text-sm text-gray-500">{software.proficiency}%</span>
-                      </div>
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <motion.div
-                          className="h-full bg-black"
-                          style={{ width: `${software.proficiency}%` }}
-                          transition={{ duration: 1, ease: "easeOut" }}
-                        />
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
             </div>
           </Section>
         );
@@ -1503,12 +1562,35 @@ const App = () => {
           >
             <div className="space-y-8">
               {experienceData.experience.map((exp, index) => (
-                <ProjectCard
+                <motion.div
                   key={index}
-                  {...exp}
-                  icon={Briefcase}
-                  variant="outline"
-                />
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="bg-white p-6 rounded-xl shadow-md border border-gray-200"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-xl font-semibold text-gray-900">{exp.title}</h3>
+                      <p className="text-sm text-gray-500">{exp.duration}</p>
+                    </div>
+                    {exp.link && (
+                      <div className="flex space-x-2">
+                        <a href={exp.link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800 flex items-center space-x-1">
+                          <span>Learn More</span>
+                          <ExternalLink size={16} />
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                  <p className="mt-4 text-gray-700">{exp.description}</p>
+                  {exp.moreInfo && (
+                    <div className="mt-4 text-gray-600">
+                      {exp.moreInfo}
+                    </div>
+                  )}
+                </motion.div>
               ))}
             </div>
           </Section>
@@ -1521,15 +1603,66 @@ const App = () => {
             subtitle="Experimental work and creative explorations"
           >
             <div className="grid grid-cols-1 gap-8">
-              {/* Retain old personal projects */}
               {personalProjects.map((project, index) => (
                 <ProjectCard
                   key={index}
                   {...project}
                   variant={project.variant || 'default'}
+                  category="Personal"
                 />
               ))}
             </div>
+          </Section>
+        );
+
+      case 'commercial':
+        return (
+          <Section
+            title="Commercial Work"
+            subtitle="Advertising and branded content projects"
+          >
+            <motion.div
+              variants={animationVariants.container}
+              initial="hidden"
+              animate="show"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+            >
+              {experienceData.commercial.map((project, index) => (
+                <motion.div
+                  key={index}
+                  variants={animationVariants.item}
+                  className="bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all duration-200 p-4"
+                >
+                  {/* Project Header */}
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-base font-semibold text-gray-900">{project.title}</h3>
+                    {project.icon && (
+                      <project.icon className="w-4 h-4 text-gray-400 flex-shrink-0 ml-2" />
+                    )}
+                  </div>
+      
+                  {/* Duration */}
+                  <p className="text-xs text-gray-500 mb-2">{project.duration}</p>
+      
+                  {/* Description - Limited to 2 lines */}
+                  <p className="text-sm text-gray-600 line-clamp-2 mb-3">{project.description}</p>
+      
+                  {/* Technologies */}
+                  {project.technologies && (
+                    <div className="flex flex-wrap gap-1.5 mt-auto">
+                      {project.technologies.map((tech, techIndex) => (
+                        <span
+                          key={techIndex}
+                          className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs whitespace-nowrap"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+            </motion.div>
           </Section>
         );
 
@@ -1736,5 +1869,17 @@ const App = () => {
     </div>
   );
 };
+
+// ====================
+// Component: SkillCard
+// ====================
+
+// Note: Moved the SkillCard component above the App component for clarity
+
+// ====================
+// Component: ProjectCard
+// ====================
+
+// Note: Moved the ProjectCard component above the App component for clarity
 
 export default App;
