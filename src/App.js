@@ -68,25 +68,18 @@ const sidebar = {
 };
 
 const expandAnimation = {
-  initial: { height: 0, opacity: 0 },
+  initial: { opacity: 0, y: 10 },
   animate: { 
-    height: "auto", 
-    opacity: 1,
+    opacity: 1, 
+    y: 0,
     transition: { 
-      height: {
-        duration: 0.4,
-        ease: [0.04, 0.62, 0.23, 0.98]
-      },
-      opacity: { duration: 0.25 }
+      duration: 0.3 
     }
   },
   exit: { 
-    height: 0, 
-    opacity: 0,
-    transition: {
-      height: { duration: 0.3 },
-      opacity: { duration: 0.2 }
-    }
+    opacity: 0, 
+    y: 10,
+    transition: { duration: 0.2 }
   }
 };
 
@@ -103,7 +96,7 @@ const SectionTitle = ({ children }) => (
   </motion.h1>
 );
 
-// Enhanced ProjectCard Component
+// Enhanced ProjectCard Component (Always Expanded)
 const ProjectCard = ({
   id,
   title,
@@ -114,36 +107,14 @@ const ProjectCard = ({
   mediaType,
   alwaysExpanded = false,
   className = '',
-  isSelected,
-  onSelect,
-  onClose,
   icons = [] // New prop for icons in skills
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  useEffect(() => {
-    if (!isHovered && !alwaysExpanded && !isSelected) {
-      const timer = setTimeout(() => setIsExpanded(false), 300);
-      return () => clearTimeout(timer);
-    } else {
-      setIsExpanded(true);
-    }
-  }, [isHovered, alwaysExpanded, isSelected]);
-
   return (
     <motion.div
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ scale: 1.02 }}
-      transition={{ duration: 0.3 }}
-      className={`bg-white border border-gray-200 rounded-xl p-6 ${className} ${
-        !alwaysExpanded && 'cursor-pointer hover:shadow-lg'
-      }`}
-      onClick={() => !alwaysExpanded && onSelect && onSelect()}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={`bg-white border border-gray-200 rounded-xl p-6 ${className}`}
     >
       <motion.div layout className="flex flex-col">
         <div className="flex justify-between items-start">
@@ -158,19 +129,6 @@ const ProjectCard = ({
               {title}
             </motion.h3>
           </motion.div>
-          {isSelected && onClose && (
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                onClose();
-              }}
-              className="p-2 hover:bg-gray-100 rounded-full"
-            >
-              <X size={20} />
-            </motion.button>
-          )}
         </div>
 
         {duration && (
@@ -190,53 +148,45 @@ const ProjectCard = ({
         </motion.p>
 
         {/* Additional Content */}
-        <AnimatePresence>
-          {(isExpanded || alwaysExpanded || isSelected) && (moreInfo || media) && (
-            <motion.div
-              variants={expandAnimation}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="overflow-hidden"
+        {(moreInfo || media) && (
+          <motion.div
+            variants={expandAnimation}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="overflow-hidden"
+          >
+            <motion.div 
+              className="mt-4"
             >
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-                className="mt-4"
-              >
-                {media && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    {media.map((item, index) => (
-                      <motion.div
-                        key={index}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: index * 0.1 }}
-                        className="rounded-lg overflow-hidden"
-                      >
-                        {mediaType === 'image' ? (
-                          <img 
-                            src={item}
-                            alt={`${title} ${index + 1}`}
-                            className="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          <video
-                            src={item}
-                            controls
-                            className="w-full"
-                          />
-                        )}
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-                {moreInfo}
-              </motion.div>
+              {media && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  {media.map((item, index) => (
+                    <motion.div
+                      key={index}
+                      className="rounded-lg overflow-hidden"
+                    >
+                      {mediaType === 'image' ? (
+                        <img 
+                          src={item}
+                          alt={`${title} ${index + 1}`}
+                          className="w-full h-auto object-cover"
+                        />
+                      ) : (
+                        <video
+                          src={item}
+                          controls
+                          className="w-full"
+                        />
+                      )}
+                    </motion.div>
+                  ))}
+                </div>
+              )}
+              {moreInfo}
             </motion.div>
-          )}
-        </AnimatePresence>
+          </motion.div>
+        )}
       </motion.div>
     </motion.div>
   );
@@ -245,7 +195,6 @@ const ProjectCard = ({
 // NavItem Component
 const NavItem = ({ id, icon: Icon, label, isActive, onClick }) => (
   <motion.button
-    whileHover={{ scale: 1.02, x: 5 }}
     whileTap={{ scale: 0.98 }}
     onClick={onClick}
     className={`w-full flex items-center px-4 py-3 rounded-lg transition-colors duration-300 ${
@@ -262,8 +211,7 @@ const NavItem = ({ id, icon: Icon, label, isActive, onClick }) => (
 // ContactInfo Component
 const ContactInfo = ({ icon: Icon, text, href }) => (
   <motion.a
-    whileHover={{ scale: 1.05, x: 5 }}
-    whileTap={{ scale: 0.95 }}
+    whileTap={{ scale: 0.98 }}
     href={href}
     target="_blank"
     rel="noopener noreferrer"
@@ -277,7 +225,6 @@ const ContactInfo = ({ icon: Icon, text, href }) => (
 // Main HomePage Component
 const HomePage = () => {
   const [activeSection, setActiveSection] = useState('summary');
-  const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [showScroll, setShowScroll] = useState(false);
 
   // Handle scroll to show/hide the scroll-to-top button
@@ -361,12 +308,12 @@ const HomePage = () => {
   // Experience data
   const experienceData = [
     {
-      title: "Mid-Level Compositor",
+      title: "Compositor",
       duration: "PFX Studio | September 2024 - October 2024",
       description: "Lead compositing work on the feature film Proud Princess.",
       moreInfo: (
         <div className="space-y-4">
-          <h4 className="font-semibold mb-2">Key Achievements:</h4>
+          <h4 className="font-semibold text-lg mb-2">Key Achievements:</h4>
           <ul className="list-disc pl-5 space-y-1 text-gray-700">
             <li>Led compositing team for key sequences</li>
             <li>Established shot consistency guidelines</li>
@@ -620,7 +567,7 @@ const HomePage = () => {
               className="prose prose-lg max-w-none"
             >
               <p className="text-lg text-gray-700 leading-relaxed">
-                I'm a <strong>Mid-Level Compositor</strong> and{' '}
+                I'm a <strong>Compositor</strong> and{' '}
                 <strong>VFX Artist</strong> based in{' '}
                 <strong>Prague, Czech Republic</strong>, specializing in creating
                 seamless visual effects and compelling motion graphics.
@@ -661,55 +608,19 @@ const HomePage = () => {
               variants={fadeInUp}
               className="grid grid-cols-1 md:grid-cols-2 gap-6"
             >
-              <AnimatePresence>
-                {filmProjects.map((project) => (
-                  <motion.div key={project.id} layoutId={`project-${project.id}`}>
-                    <ProjectCard
-                      id={project.id}
-                      title={project.title}
-                      duration={project.duration}
-                      description={project.description}
-                      moreInfo={project.details}
-                      media={null}
-                      mediaType={null}
-                      isSelected={selectedProjectId === project.id}
-                      onSelect={() => setSelectedProjectId(project.id)}
-                      onClose={() => setSelectedProjectId(null)}
-                    />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
+              {filmProjects.map((project) => (
+                <ProjectCard
+                  key={project.id}
+                  id={project.id}
+                  title={project.title}
+                  duration={project.duration}
+                  description={project.description}
+                  moreInfo={project.details}
+                  media={null}
+                  mediaType={null}
+                />
+              ))}
             </motion.div>
-
-            <AnimatePresence>
-              {selectedProjectId && (
-                <>
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="fixed inset-0 bg-black/60 z-40"
-                    onClick={() => setSelectedProjectId(null)}
-                  />
-                  <motion.div
-                    layoutId={`project-${selectedProjectId}`}
-                    className="fixed inset-4 md:inset-20 z-50 bg-white rounded-xl overflow-y-auto"
-                  >
-                    <ProjectCard
-                      id={selectedProjectId}
-                      title={filmProjects.find(p => p.id === selectedProjectId).title}
-                      duration={filmProjects.find(p => p.id === selectedProjectId).duration}
-                      description={filmProjects.find(p => p.id === selectedProjectId).description}
-                      moreInfo={filmProjects.find(p => p.id === selectedProjectId).details}
-                      media={null}
-                      mediaType={null}
-                      isSelected={true}
-                      onClose={() => setSelectedProjectId(null)}
-                    />
-                  </motion.div>
-                </>
-              )}
-            </AnimatePresence>
           </motion.div>
         );
 
@@ -737,7 +648,7 @@ const HomePage = () => {
                   moreInfo={skill.moreInfo}
                   media={null}
                   mediaType={null}
-                  alwaysExpanded={false}
+                  alwaysExpanded={true}
                   icons={skill.icons}
                   className="flex items-start"
                 />
@@ -771,7 +682,7 @@ const HomePage = () => {
                   moreInfo={exp.moreInfo}
                   media={null}
                   mediaType={null}
-                  alwaysExpanded={false}
+                  alwaysExpanded={true}
                   className="flex items-start"
                 />
               ))}
@@ -783,7 +694,7 @@ const HomePage = () => {
                 moreInfo={null}
                 media={null}
                 mediaType={null}
-                alwaysExpanded={false}
+                alwaysExpanded={true}
                 className="flex items-start"
               />
             </motion.div>
@@ -911,7 +822,7 @@ const HomePage = () => {
         variants={sidebar}
         initial="initial"
         animate="animate"
-        className="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-gray-200 p-6"
+        className="w-full md:w-64 bg-white border-b md:border-b-0 md:border-r border-gray-200 p-6 flex-shrink-0"
       >
         <div className="flex flex-col h-full">
           {/* Profile Picture */}
@@ -939,7 +850,7 @@ const HomePage = () => {
             initial="initial"
             animate="animate"
           >
-            <ContactInfo icon={MapPin} text="Prague, Czech Republic" />
+            <ContactInfo icon={MapPin} text="Prague, Czech Republic" href="#" />
             <ContactInfo
               icon={Mail}
               text="martintomek.vfx@gmail.com"
@@ -964,7 +875,7 @@ const HomePage = () => {
 
           {/* Navigation */}
           <motion.div 
-            className="space-y-2"
+            className="space-y-2 flex-1"
             variants={stagger}
             initial="initial"
             animate="animate"
@@ -981,29 +892,31 @@ const HomePage = () => {
 
           {/* Footer */}
           <motion.div 
-            className="mt-auto pt-6 border-t border-gray-200"
+            className="pt-6 border-t border-gray-200 fixed bottom-0 left-0 w-full md:w-64 bg-white"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
           >
-            <p className="text-sm text-gray-500">Available for new opportunities</p>
-            <p className="text-sm text-gray-500 mt-1">
-              Willing to relocate to Canary Islands
-            </p>
-            <motion.a
-              href="#"
-              className="flex items-center mt-4 text-gray-600 hover:text-black transition-colors"
-              whileHover={{ x: 5 }}
-            >
-              <Download size={16} className="mr-2" />
-              <span className="text-sm">Download Resume</span>
-            </motion.a>
+            <div className="flex flex-col">
+              <p className="text-sm text-gray-500">Available for new opportunities</p>
+              <p className="text-sm text-gray-500 mt-1">
+                Willing to relocate to Canary Islands
+              </p>
+              <motion.a
+                href="#"
+                className="flex items-center mt-4 text-gray-600 hover:text-black transition-colors"
+                whileHover={{ x: 5 }}
+              >
+                <Download size={16} className="mr-2" />
+                <span className="text-sm">Download Resume</span>
+              </motion.a>
+            </div>
           </motion.div>
         </div>
       </motion.nav>
 
       {/* Main Content */}
-      <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+      <main className="flex-1 p-4 md:p-8 overflow-y-auto pb-20 md:pb-0">
         <AnimatePresence mode="wait">
           {renderContent()}
         </AnimatePresence>
