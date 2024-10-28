@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+// pages/index.js
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clapperboard,
@@ -104,6 +105,7 @@ const SectionTitle = ({ children }) => (
 
 // Enhanced ProjectCard Component
 const ProjectCard = ({
+  id,
   title,
   description,
   duration,
@@ -115,18 +117,19 @@ const ProjectCard = ({
   isSelected,
   onSelect,
   onClose,
+  icons = [] // New prop for icons in skills
 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
-    if (!isHovered && !alwaysExpanded) {
+    if (!isHovered && !alwaysExpanded && !isSelected) {
       const timer = setTimeout(() => setIsExpanded(false), 300);
       return () => clearTimeout(timer);
     } else {
       setIsExpanded(true);
     }
-  }, [isHovered, alwaysExpanded]);
+  }, [isHovered, alwaysExpanded, isSelected]);
 
   return (
     <motion.div
@@ -144,21 +147,16 @@ const ProjectCard = ({
     >
       <motion.div layout className="flex flex-col">
         <div className="flex justify-between items-start">
-          <motion.div layout>
+          <motion.div layout className="flex items-center space-x-2">
+            {icons.map((IconComponent, index) => (
+              <IconComponent key={index} size={20} className="text-indigo-600" />
+            ))}
             <motion.h3 
               layout
               className="text-xl font-semibold text-gray-900"
             >
               {title}
             </motion.h3>
-            {duration && (
-              <motion.p 
-                layout
-                className="text-sm text-gray-500 mt-1"
-              >
-                {duration}
-              </motion.p>
-            )}
           </motion.div>
           {isSelected && onClose && (
             <motion.button
@@ -175,6 +173,15 @@ const ProjectCard = ({
           )}
         </div>
 
+        {duration && (
+          <motion.p 
+            layout
+            className="text-sm text-gray-500 mt-1"
+          >
+            {duration}
+          </motion.p>
+        )}
+
         <motion.p 
           layout
           className="text-gray-600 mt-4"
@@ -182,6 +189,7 @@ const ProjectCard = ({
           {description}
         </motion.p>
 
+        {/* Additional Content */}
         <AnimatePresence>
           {(isExpanded || alwaysExpanded || isSelected) && (moreInfo || media) && (
             <motion.div
@@ -270,6 +278,20 @@ const ContactInfo = ({ icon: Icon, text, href }) => (
 const HomePage = () => {
   const [activeSection, setActiveSection] = useState('summary');
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [showScroll, setShowScroll] = useState(false);
+
+  // Handle scroll to show/hide the scroll-to-top button
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.pageYOffset > 300) {
+        setShowScroll(true);
+      } else {
+        setShowScroll(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Navigation sections
   const sections = [
@@ -358,24 +380,20 @@ const HomePage = () => {
       duration: "Incognito Studio | August 2021 - Present",
       description: "Provided VFX services for various high-profile clients.",
       moreInfo: (
-        <div className="space-y-2">
-          <h4 className="font-semibold mb-2">Clients:</h4>
-          <ul className="list-disc pl-5 space-y-1 text-gray-700 leading-relaxed grid grid-cols-2 gap-2">
-            <li>Panasonic Japan</li>
-            <li>Moneta Bank</li>
-            <li>McDonald's</li>
-            <li>Ketoknoflik</li>
-            <li>PSS</li>
-            <li>T-Mobile</li>
-            <li>O2</li>
-            <li>7energy</li>
-            <li>Billa</li>
-            <li>Epet</li>
-          </ul>
-          <p className="text-gray-700 leading-relaxed mt-4">
+        <div className="space-y-4">
+          <h4 className="font-semibold text-lg mb-2">Clients:</h4>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {/* Replace these with actual client logos or styled blocks */}
+            {['Panasonic Japan', 'Moneta Bank', 'McDonald\'s', 'Ketoknoflik', 'PSS', 'T-Mobile', 'O2', '7energy', 'Billa', 'Epet'].map((client, index) => (
+              <div key={index} className="bg-gray-100 rounded-lg p-4 flex items-center justify-center">
+                <span className="text-gray-700">{client}</span>
+              </div>
+            ))}
+          </div>
+          <p className="text-gray-700 mt-4">
             VFX Supervisor for the Creditas project.
           </p>
-          <p className="text-gray-700 leading-relaxed">
+          <p className="text-gray-700">
             Working on "Rosa & Dara a jejich velké letní dobrodružství", a 3D feature film.
           </p>
         </div>
@@ -384,12 +402,14 @@ const HomePage = () => {
     {
       title: "Freelance Motion Graphic Designer",
       duration: "VIG Production | October 2023 - Present",
-      description: "Created motion graphics for various client projects."
+      description: "Created motion graphics for various client projects.",
+      moreInfo: null
     },
     {
       title: "Freelance Nuke Compositor",
       duration: "Let it Roll Festival | July 2023 - August 2023",
-      description: "Co-created a 5-minute opening sequence using Nuke and Nuke Studio."
+      description: "Co-created a 5-minute opening sequence using Nuke and Nuke Studio.",
+      moreInfo: null
     }
   ];
 
@@ -414,7 +434,8 @@ const HomePage = () => {
             <li>Shot cleanup and restoration</li>
           </ul>
         </div>
-      )
+      ),
+      icons: [Palette, Monitor] // Icons representing compositing
     },
     {
       title: "Technical Direction",
@@ -434,7 +455,8 @@ const HomePage = () => {
             <li>Technical documentation</li>
           </ul>
         </div>
-      )
+      ),
+      icons: [Terminal, Code] // Icons representing technical direction
     },
     {
       title: "Motion Design",
@@ -454,7 +476,8 @@ const HomePage = () => {
             <li>Animated infographics</li>
           </ul>
         </div>
-      )
+      ),
+      icons: [Palette, Monitor] // Icons representing motion design
     },
     {
       title: "Creative Development",
@@ -474,7 +497,92 @@ const HomePage = () => {
             <li>Digital art creation</li>
           </ul>
         </div>
-      )
+      ),
+      icons: [Camera, Palette] // Icons representing creative development
+    }
+  ];
+
+  // Personal projects data
+  const personalProjects = [
+    {
+      id: 'bachelor-movie',
+      title: "Bachelor Movie",
+      description: "A unique fusion of 3D animation, AI, and analog techniques creating a distinctive narrative experience.",
+      moreInfo: (
+        <div className="space-y-4">
+          <motion.a
+            href="https://youtu.be/M6bm6yRKshA"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-700"
+            whileHover={{ x: 5 }}
+          >
+            <span>Watch on YouTube</span>
+            <ExternalLink size={16} />
+          </motion.a>
+        </div>
+      ),
+      alwaysExpanded: true
+    },
+    {
+      id: 'nuke-grab-tool',
+      title: "Nuke Grab Tool",
+      description: "Implemented the Blender Grab Tool within Nuke, enhancing node movement capabilities.",
+      moreInfo: (
+        <div className="space-y-4">
+          <motion.a
+            href="http://www.nukepedia.com/python/nodegraph/nuke-grab-tool"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-700"
+            whileHover={{ x: 5 }}
+          >
+            <span>View the tool on Nukepedia</span>
+            <ExternalLink size={16} />
+          </motion.a>
+          <p className="text-gray-700">
+            This script implements the entire Blender Grab Tool within Nuke, bringing its
+            full node movement capabilities to your compositing workflow.
+          </p>
+        </div>
+      ),
+      alwaysExpanded: true
+    },
+    {
+      id: 'glitch-art',
+      title: "Glitch Art",
+      description: "Experimental glitch art created through various digital manipulation techniques.",
+      media: glitchImages,
+      mediaType: "image",
+      moreInfo: (
+        <div className="space-y-4">
+          <h4 className="font-semibold text-lg">Techniques:</h4>
+          <ul className="list-disc pl-5 space-y-2 text-gray-700">
+            <li>Digital signal manipulation</li>
+            <li>Data moshing</li>
+            <li>Custom processing algorithms</li>
+          </ul>
+        </div>
+      ),
+      alwaysExpanded: true
+    },
+    {
+      id: 'analog-photography',
+      title: "Analog Photography",
+      description: "Capturing moments through analog lenses and developing alternative film processes.",
+      media: analogImages,
+      mediaType: "image",
+      moreInfo: (
+        <div className="space-y-4">
+          <h4 className="font-semibold text-lg">Process:</h4>
+          <ul className="list-disc pl-5 space-y-2 text-gray-700">
+            <li>Film photography using various camera models</li>
+            <li>Darkroom development techniques</li>
+            <li>Creative photo manipulation</li>
+          </ul>
+        </div>
+      ),
+      alwaysExpanded: true
     }
   ];
 
@@ -557,7 +665,13 @@ const HomePage = () => {
                 {filmProjects.map((project) => (
                   <motion.div key={project.id} layoutId={`project-${project.id}`}>
                     <ProjectCard
-                      {...project}
+                      id={project.id}
+                      title={project.title}
+                      duration={project.duration}
+                      description={project.description}
+                      moreInfo={project.details}
+                      media={null}
+                      mediaType={null}
                       isSelected={selectedProjectId === project.id}
                       onSelect={() => setSelectedProjectId(project.id)}
                       onClose={() => setSelectedProjectId(null)}
@@ -582,7 +696,13 @@ const HomePage = () => {
                     className="fixed inset-4 md:inset-20 z-50 bg-white rounded-xl overflow-y-auto"
                   >
                     <ProjectCard
-                      {...filmProjects.find(p => p.id === selectedProjectId)}
+                      id={selectedProjectId}
+                      title={filmProjects.find(p => p.id === selectedProjectId).title}
+                      duration={filmProjects.find(p => p.id === selectedProjectId).duration}
+                      description={filmProjects.find(p => p.id === selectedProjectId).description}
+                      moreInfo={filmProjects.find(p => p.id === selectedProjectId).details}
+                      media={null}
+                      mediaType={null}
                       isSelected={true}
                       onClose={() => setSelectedProjectId(null)}
                     />
@@ -606,12 +726,20 @@ const HomePage = () => {
             
             <motion.div 
               variants={fadeInUp}
-              className="space-y-6"
+              className="grid grid-cols-1 md:grid-cols-2 gap-6"
             >
               {skillsData.map((skill, index) => (
                 <ProjectCard
                   key={index}
-                  {...skill}
+                  id={`skill-${index}`}
+                  title={skill.title}
+                  description={skill.description}
+                  moreInfo={skill.moreInfo}
+                  media={null}
+                  mediaType={null}
+                  alwaysExpanded={false}
+                  icons={skill.icons}
+                  className="flex items-start"
                 />
               ))}
             </motion.div>
@@ -636,13 +764,27 @@ const HomePage = () => {
               {experienceData.map((exp, index) => (
                 <ProjectCard
                   key={index}
-                  {...exp}
+                  id={`experience-${index}`}
+                  title={exp.title}
+                  duration={exp.duration}
+                  description={exp.description}
+                  moreInfo={exp.moreInfo}
+                  media={null}
+                  mediaType={null}
+                  alwaysExpanded={false}
+                  className="flex items-start"
                 />
               ))}
               
               <ProjectCard
+                id="education"
                 title="Education"
                 description="The University of Creative Communication, Prague - Degree in VFX and Animation"
+                moreInfo={null}
+                media={null}
+                mediaType={null}
+                alwaysExpanded={false}
+                className="flex items-start"
               />
             </motion.div>
           </motion.div>
@@ -661,6 +803,7 @@ const HomePage = () => {
 
             {/* Bachelor Movie */}
             <ProjectCard
+              id="bachelor-movie"
               title="Bachelor Movie"
               description="A unique fusion of 3D animation, AI, and analog techniques creating a distinctive narrative experience."
               moreInfo={
@@ -678,10 +821,39 @@ const HomePage = () => {
                 </div>
               }
               alwaysExpanded={true}
+              className="col-span-1 md:col-span-2"
+            />
+
+            {/* Nuke Grab Tool */}
+            <ProjectCard
+              id="nuke-grab-tool"
+              title="Nuke Grab Tool"
+              description="Implemented the Blender Grab Tool within Nuke, enhancing node movement capabilities."
+              moreInfo={
+                <div className="space-y-4">
+                  <motion.a
+                    href="http://www.nukepedia.com/python/nodegraph/nuke-grab-tool"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center space-x-2 text-indigo-600 hover:text-indigo-700"
+                    whileHover={{ x: 5 }}
+                  >
+                    <span>View the tool on Nukepedia</span>
+                    <ExternalLink size={16} />
+                  </motion.a>
+                  <p className="text-gray-700">
+                    This script implements the entire Blender Grab Tool within Nuke, bringing its
+                    full node movement capabilities to your compositing workflow.
+                  </p>
+                </div>
+              }
+              alwaysExpanded={true}
+              className="col-span-1 md:col-span-2"
             />
 
             {/* Glitch Art */}
             <ProjectCard
+              id="glitch-art"
               title="Glitch Art"
               description="Experimental glitch art created through various digital manipulation techniques."
               media={glitchImages}
@@ -697,10 +869,12 @@ const HomePage = () => {
                 </div>
               }
               alwaysExpanded={true}
+              className="col-span-1 md:col-span-2"
             />
 
             {/* Analog Photography */}
             <ProjectCard
+              id="analog-photography"
               title="Analog Photography"
               description="Capturing moments through analog lenses and developing alternative film processes."
               media={analogImages}
@@ -716,6 +890,7 @@ const HomePage = () => {
                 </div>
               }
               alwaysExpanded={true}
+              className="col-span-1 md:col-span-2"
             />
           </motion.div>
         );
@@ -836,7 +1011,7 @@ const HomePage = () => {
       
       {/* Scroll to top button that appears when scrolling down */}
       <AnimatePresence>
-        {typeof window !== 'undefined' && window.pageYOffset > 300 && (
+        {showScroll && (
           <motion.button
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
