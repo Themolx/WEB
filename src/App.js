@@ -1988,43 +1988,6 @@ const App = () => {
             setActiveSection={setActiveSection}
           />
 
-          {/* Social Links */}
-          <div className="mt-6">
-            <div className="flex space-x-4">
-              <motion.a
-                href="https://github.com/Themolx"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-black transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Github size={20} />
-                <span className="sr-only">GitHub</span>
-              </motion.a>
-              <motion.a
-                href="https://www.linkedin.com/in/martin-tomek"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-black transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Linkedin size={20} />
-                <span className="sr-only">LinkedIn</span>
-              </motion.a>
-              <motion.a
-                href="mailto:martintomek.vfx@gmail.com"
-                className="text-gray-600 hover:text-black transition-colors"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <Mail size={20} />
-                <span className="sr-only">Email</span>
-              </motion.a>
-            </div>
-          </div>
-
           {/* Footer */}
           <motion.div
             variants={animationVariants.item}
@@ -2035,13 +1998,13 @@ const App = () => {
           >
             <p className="text-sm text-gray-500">Available for new opportunities</p>
             <p className="text-sm text-gray-500 mt-1">
-              Willing to relocate to Canary Islands
+              Willing to relocate 
             </p>
             <motion.a
               href="#"
               className="flex items-center mt-4 text-gray-600 hover:text-black 
                 transition-colors group"
-              whileHover={{ scale: 1.05 }} // Simplified hover
+              whileHover={{ scale: 1.05 }}
             >
               <Download size={16} className="mr-2 group-hover:scale-110 transition-transform" />
               <span className="text-sm">Download Resume</span>
