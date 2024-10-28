@@ -21,7 +21,42 @@ import {
   ChevronUp,
   Menu,
   Maximize,
-  Minimize
+  Minimize,
+  // Additional icons
+  Camera,
+  Video,
+  Monitor,
+  Palette,
+  Brush,
+  Laptop,
+  Terminal,
+  Settings,
+  Tool,
+  Layers,
+  Image,
+  FileVideo,
+  Tv,
+  Projector,
+  Lightbulb,
+  Sparkles,
+  Wand2,
+  Rocket,
+  Star,
+  Award,
+  Trophy,
+  Medal,
+  Certificate,
+  Zap,
+  Eye,
+  PenTool,
+  Box,
+  Boxes,
+  Component,
+  Layout,
+  Scissors,
+  Workflow,
+  Gauge,
+  Sliders
 } from 'lucide-react';
 
 // ====================
@@ -221,26 +256,36 @@ const ImageGalleryModal = ({ images, currentIndex, setCurrentIndex, onClose }) =
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
+  const handleBackgroundClick = (e) => {
+    // Only close if clicking the background overlay
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center"
-      onClick={onClose}
+      onClick={handleBackgroundClick}  // Changed from onClick={onClose}
     >
       <motion.div
         ref={dragConstraints}
         className="relative max-w-5xl w-full h-full flex items-center justify-center"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => e.stopPropagation()}  // Prevent clicks from bubbling up
       >
         {/* Navigation Controls */}
-        <div className="absolute top-4 right-4 flex space-x-4">
+        <div className="absolute top-4 right-4 flex space-x-4 z-50">
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             className="p-2 bg-white/10 rounded-full text-white hover:bg-white/20"
-            onClick={() => setCurrentIndex((prev) => (prev - 1 + images.length) % images.length)}
+            onClick={(e) => {
+              e.stopPropagation();  // Add this to prevent bubbling
+              setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+            }}
           >
             <ChevronRight className="w-6 h-6 rotate-180" />
           </motion.button>
@@ -248,7 +293,10 @@ const ImageGalleryModal = ({ images, currentIndex, setCurrentIndex, onClose }) =
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             className="p-2 bg-white/10 rounded-full text-white hover:bg-white/20"
-            onClick={() => setCurrentIndex((prev) => (prev + 1) % images.length)}
+            onClick={(e) => {
+              e.stopPropagation();  // Add this to prevent bubbling
+              setCurrentIndex((prev) => (prev + 1) % images.length);
+            }}
           >
             <ChevronRight className="w-6 h-6" />
           </motion.button>
@@ -256,7 +304,10 @@ const ImageGalleryModal = ({ images, currentIndex, setCurrentIndex, onClose }) =
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             className="p-2 bg-white/10 rounded-full text-white hover:bg-white/20"
-            onClick={onClose}
+            onClick={(e) => {
+              e.stopPropagation();  // Add this to prevent bubbling
+              onClose();
+            }}
           >
             <X className="w-6 h-6" />
           </motion.button>
@@ -312,7 +363,9 @@ const VideoModal = ({ url, onClose, title }) => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
-      onClick={onClose}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
     >
       <motion.div
         className="relative w-full max-w-4xl bg-black rounded-lg overflow-hidden"
@@ -391,11 +444,11 @@ const Navigation = ({ activeSection, setActiveSection, isMobile = false }) => {
             ${isMobile ? 'p-2' : 'w-full px-4 py-3'}
             flex items-center rounded-lg transition-all duration-300
             ${activeSection === item.id
-              ? 'bg-black text-white'
+              ? 'bg-black text-white'  // This is the style we want to match
               : 'text-gray-600 hover:bg-gray-100 hover:text-black'
             }
           `}
-          whileHover={{ scale: isMobile ? 1.05 : 1 }} // Removed y animation
+          whileHover={{ scale: isMobile ? 1.05 : 1 }}
         >
           <item.icon size={20} className="min-w-[20px]" />
           {!isMobile && <span className="ml-3 text-sm font-medium">{item.label}</span>}
@@ -422,14 +475,11 @@ const ProjectCard = ({
   icon: Icon,
   variant = 'default',
   videoUrl,
-  category, // Added category prop
-  studio, // New prop for studio information
-  alwaysExpanded = false // New prop with default value
+  category,
+  studio,
+  alwaysExpanded = false
 }) => {
-  // Initialize isExpanded based on alwaysExpanded and category
-  const [isExpanded, setIsExpanded] = useState(
-    alwaysExpanded && category !== 'Film'
-  );
+  const [isExpanded, setIsExpanded] = useState(alwaysExpanded && category !== 'Film');
   const [showGallery, setShowGallery] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -470,12 +520,12 @@ const ProjectCard = ({
       ref={ref}
       initial={{ opacity: 0, y: 50 }}
       animate={controls}
-      whileHover={{}} // Removed y animation
+      whileHover={{}}
       transition={{ duration: 0.3 }}
       className={`
         rounded-xl overflow-hidden border transition-all duration-300
         ${currentVariant.background} ${currentVariant.hover} ${className}
-        cursor-pointer
+        ${canExpand ? 'cursor-pointer' : ''}
       `}
       onClick={() => {
         if (canExpand) {
@@ -596,9 +646,9 @@ const ProjectCard = ({
                       key={index}
                       variants={animationVariants.item}
                       whileHover={{ scale: 1.05 }}
-                      className="relative group cursor-pointer"
+                      className="relative group cursor-pointer aspect-square"
                       onClick={(e) => {
-                        e.stopPropagation();
+                        e.stopPropagation(); // Prevent card expansion
                         setCurrentImageIndex(index);
                         setShowGallery(true);
                       }}
@@ -606,7 +656,7 @@ const ProjectCard = ({
                       <img
                         src={src}
                         alt={`${title} ${index + 1}`}
-                        className="w-full h-48 object-cover rounded-lg"
+                        className="w-full h-full object-cover rounded-lg"
                       />
                       <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 
                         transition-opacity duration-200 rounded-lg flex items-center justify-center">
@@ -957,164 +1007,140 @@ const App = () => {
     ],
     commercial: [
       {
-    title: "Panasonic Japan",
-    description: "Led VFX and compositing for international product launch campaign.",
-    duration: "2023",
-    icon: Briefcase,
-    variant: 'default',
-    technologies: ["Nuke", "After Effects", "DaVinci Resolve"],
-    details: null, // Non-expandable for commercial work
-    media: [
-      'https://via.placeholder.com/800x600.png?text=Panasonic+Campaign+1',
-      'https://via.placeholder.com/800x600.png?text=Panasonic+Campaign+2'
-    ],
-    mediaType: 'image',
-    link: '#'
-  },
-  {
-    title: "Moneta Bank",
-    description: "Created visual effects and motion graphics for banking service advertisements.",
-    duration: "2023",
-    icon: Briefcase,
-    variant: 'default',
-    technologies: ["Nuke", "After Effects"],
-    details: null,
-    media: [
-      'https://via.placeholder.com/800x600.png?text=Moneta+Bank+1',
-      'https://via.placeholder.com/800x600.png?text=Moneta+Bank+2'
-    ],
-    mediaType: 'image',
-    link: '#'
-  },
-  {
-    title: "McDonald's",
-    description: "Developed dynamic motion graphics and VFX for promotional campaigns.",
-    duration: "2023",
-    icon: Briefcase,
-    variant: 'default',
-    technologies: ["Nuke", "After Effects"],
-    details: null,
-    media: [
-      'https://via.placeholder.com/800x600.png?text=McDonalds+1',
-      'https://via.placeholder.com/800x600.png?text=McDonalds+2'
-    ],
-    mediaType: 'image',
-    link: '#'
-  },
-  {
-    title: "T-Mobile",
-    description: "Created visual effects for brand campaigns and product launches.",
-    duration: "2023",
-    icon: Briefcase,
-    variant: 'default',
-    technologies: ["Nuke", "After Effects"],
-    details: null,
-    media: [
-      'https://via.placeholder.com/800x600.png?text=T-Mobile+1',
-      'https://via.placeholder.com/800x600.png?text=T-Mobile+2'
-    ],
-    mediaType: 'image',
-    link: '#'
-  },
-  {
-    title: "O2",
-    description: "Delivered motion graphics and visual effects for telecommunications campaigns.",
-    duration: "2023",
-    icon: Briefcase,
-    variant: 'default',
-    technologies: ["Nuke", "After Effects"],
-    details: null,
-    media: [
-      'https://via.placeholder.com/800x600.png?text=O2+1',
-      'https://via.placeholder.com/800x600.png?text=O2+2'
-    ],
-    mediaType: 'image',
-    link: '#'
-  },
-  {
-    title: "Ketoknoflik",
-    description: "Produced engaging visual content and effects for brand communication.",
-    duration: "2023",
-    icon: Briefcase,
-    variant: 'default',
-    technologies: ["Nuke", "After Effects"],
-    details: null,
-    media: [
-      'https://via.placeholder.com/800x600.png?text=Ketoknoflik+1',
-      'https://via.placeholder.com/800x600.png?text=Ketoknoflik+2'
-    ],
-    mediaType: 'image',
-    link: '#'
-  },
-  {
-    title: "PSS",
-    description: "Developed visual effects and motion graphics for corporate communications.",
-    duration: "2023",
-    icon: Briefcase,
-    variant: 'default',
-    technologies: ["Nuke", "After Effects"],
-    details: null,
-    media: [
-      'https://via.placeholder.com/800x600.png?text=PSS+1',
-      'https://via.placeholder.com/800x600.png?text=PSS+2'
-    ],
-    mediaType: 'image',
-    link: '#'
-  },
-  {
-    title: "7energy",
-    description: "Created dynamic visual content for energy drink marketing campaigns.",
-    duration: "2023",
-    icon: Briefcase,
-    variant: 'default',
-    technologies: ["Nuke", "After Effects"],
-    details: null,
-    media: [
-      'https://via.placeholder.com/800x600.png?text=7energy+1',
-      'https://via.placeholder.com/800x600.png?text=7energy+2'
-    ],
-    mediaType: 'image',
-    link: '#'
-  },
-  {
-    title: "Billa",
-    description: "Delivered visual effects and motion graphics for retail advertising.",
-    duration: "2023",
-    icon: Briefcase,
-    variant: 'default',
-    technologies: ["Nuke", "After Effects"],
-    details: null,
-    media: [
-      'https://via.placeholder.com/800x600.png?text=Billa+1',
-      'https://via.placeholder.com/800x600.png?text=Billa+2'
-    ],
-    mediaType: 'image',
-    link: '#'
-  },
-  {
-    title: "Epet",
-    description: "Created visual content for pet supply retailer marketing campaigns.",
-    duration: "2023",
-    icon: Briefcase,
-    variant: 'default',
-    technologies: ["Nuke", "After Effects"],
-    details: null,
-    media: [
-      'https://via.placeholder.com/800x600.png?text=Epet+1',
-      'https://via.placeholder.com/800x600.png?text=Epet+2'
-    ],
-    mediaType: 'image',
-    link: '#'
-  },
-
-      // Add more commercial projects as needed
+        title: "Panasonic Japan",
+        description: "Led VFX and compositing for international product launch campaign.",
+        duration: "2023",
+        variant: 'default',
+        technologies: ["Nuke", "After Effects", "DaVinci Resolve"],
+        details: null,
+        media: [
+          'https://via.placeholder.com/800x600.png?text=Panasonic+Campaign+1',
+          'https://via.placeholder.com/800x600.png?text=Panasonic+Campaign+2'
+        ],
+        mediaType: 'image',
+        link: '#'
+      },
+      {
+        title: "Moneta Bank",
+        description: "Created visual effects and motion graphics for banking service advertisements.",
+        duration: "2023",
+        variant: 'default',
+        technologies: ["Nuke", "After Effects"],
+        details: null,
+        media: [
+          'https://via.placeholder.com/800x600.png?text=Moneta+Bank+1',
+          'https://via.placeholder.com/800x600.png?text=Moneta+Bank+2'
+        ],
+        mediaType: 'image',
+        link: '#'
+      },
+      {
+        title: "McDonald's",
+        description: "Developed dynamic motion graphics and VFX for promotional campaigns.",
+        duration: "2023",
+        variant: 'default',
+        technologies: ["Nuke", "After Effects"],
+        details: null,
+        media: [
+          'https://via.placeholder.com/800x600.png?text=McDonalds+1',
+          'https://via.placeholder.com/800x600.png?text=McDonalds+2'
+        ],
+        mediaType: 'image',
+        link: '#'
+      },
+      {
+        title: "T-Mobile",
+        description: "Created visual effects for brand campaigns and product launches.",
+        duration: "2023",
+        variant: 'default',
+        technologies: ["Nuke", "After Effects"],
+        details: null,
+        media: [
+          'https://via.placeholder.com/800x600.png?text=T-Mobile+1',
+          'https://via.placeholder.com/800x600.png?text=T-Mobile+2'
+        ],
+        mediaType: 'image',
+        link: '#'
+      },
+      {
+        title: "O2",
+        description: "Delivered motion graphics and visual effects for telecommunications campaigns.",
+        duration: "2023",
+        variant: 'default',
+        technologies: ["Nuke", "After Effects"],
+        details: null,
+        media: [
+          'https://via.placeholder.com/800x600.png?text=O2+1',
+          'https://via.placeholder.com/800x600.png?text=O2+2'
+        ],
+        mediaType: 'image',
+        link: '#'
+      },
+      {
+        title: "PSS",
+        description: "Developed visual effects and motion graphics for corporate communications.",
+        duration: "2023",
+        variant: 'default',
+        technologies: ["Nuke", "After Effects"],
+        details: null,
+        media: [
+          'https://via.placeholder.com/800x600.png?text=PSS+1',
+          'https://via.placeholder.com/800x600.png?text=PSS+2'
+        ],
+        mediaType: 'image',
+        link: '#'
+      },
+      {
+        title: "7energy",
+        description: "Created dynamic visual content for energy drink marketing campaigns.",
+        duration: "2023",
+        variant: 'default',
+        technologies: ["Nuke", "After Effects"],
+        details: null,
+        media: [
+          'https://via.placeholder.com/800x600.png?text=7energy+1',
+          'https://via.placeholder.com/800x600.png?text=7energy+2'
+        ],
+        mediaType: 'image',
+        link: '#'
+      },
+      {
+        title: "Billa",
+        description: "Delivered visual effects and motion graphics for retail advertising.",
+        duration: "2023",
+        variant: 'default',
+        technologies: ["Nuke", "After Effects"],
+        details: null,
+        media: [
+          'https://via.placeholder.com/800x600.png?text=Billa+1',
+          'https://via.placeholder.com/800x600.png?text=Billa+2'
+        ],
+        mediaType: 'image',
+        link: '#'
+      },
+      {
+        title: "Epet",
+        description: "Created visual content for pet supply retailer marketing campaigns.",
+        duration: "2023",
+        variant: 'default',
+        technologies: ["Nuke", "After Effects"],
+        details: null,
+        media: [
+          'https://via.placeholder.com/800x600.png?text=Epet+1',
+          'https://via.placeholder.com/800x600.png?text=Epet+2'
+        ],
+        mediaType: 'image',
+        link: '#'
+      }
     ],
     experience: [
       {
         title: "Compositor",
         duration: "PFX Studio | September 2024 - October 2024",
         description: "Lead compositing work on the feature film Proud Princess.",
-        icon: Film,  // Add icon
+        icon: Layers, // Changed from Film to Layers
+        variant: 'featured',
+        technologies: ["Nuke", "DaVinci Resolve", "Mocha Pro"],
         moreInfo: (
           <div className="space-y-4">
             <h4 className="font-semibold text-lg mb-2">Key Achievements:</h4>
@@ -1130,7 +1156,9 @@ const App = () => {
         title: "Compositor",
         duration: "Incognito Studio | August 2021 - Present",
         description: "Compositor with experience in on-set supervision.",
-        icon: Film,  // Add icon
+        icon: PenTool, // Changed from Code to PenTool
+        variant: 'default',
+        technologies: ["Nuke", "Python", "After Effects"],
         moreInfo: (
           <div className="space-y-4">
             <p className="text-gray-700">
@@ -1144,7 +1172,7 @@ const App = () => {
         title: "Technical Director TD",
         duration: "Incognito Studio | January 2025 - Present",
         description: "Overseeing technical operations and pipeline development.",
-        icon: Film,  // Add icon
+        icon: Settings, // Changed from Film to Settings
         moreInfo: (
           <div className="space-y-4">
             <h4 className="font-semibold text-lg mb-2">Responsibilities:</h4>
@@ -1160,14 +1188,14 @@ const App = () => {
         title: "Freelance Motion Graphic Designer",
         duration: "VIG Production | October 2023 - Present",
         description: "Created motion graphics for various client projects.",
-        icon: Film,  // Add icon
+        icon: Monitor, // Changed from Film to Monitor
         moreInfo: null
       },
       {
         title: "Freelance Nuke Compositor",
         duration: "Let it Roll Festival | July 2023 - August 2023",
         description: "Co-created a 5-minute opening sequence using Nuke and Nuke Studio.",
-        icon: Film,  // Add icon
+        icon: Video, // Changed from Film to Video
         moreInfo: null
       }
       // Add more roles as needed
@@ -1502,19 +1530,14 @@ const App = () => {
                   className="bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all duration-200 p-4"
                 >
                   {/* Project Header */}
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-base font-semibold text-gray-900">{project.title}</h3>
-                    {project.icon && (
-                      <project.icon className="w-4 h-4 text-gray-400 flex-shrink-0 ml-2" />
-                    )}
-                  </div>
-
+                  <h3 className="text-base font-semibold text-gray-900 mb-2">{project.title}</h3>
+                  
                   {/* Duration */}
                   <p className="text-xs text-gray-500 mb-2">{project.duration}</p>
-
+                  
                   {/* Description - Limited to 2 lines */}
                   <p className="text-sm text-gray-600 line-clamp-2 mb-3">{project.description}</p>
-
+                  
                   {/* Technologies */}
                   {project.technologies && (
                     <div className="flex flex-wrap gap-1.5 mt-auto">
@@ -1571,20 +1594,46 @@ const App = () => {
                   className="bg-white p-6 rounded-xl shadow-md border border-gray-200"
                 >
                   <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-xl font-semibold text-gray-900">{exp.title}</h3>
-                      <p className="text-sm text-gray-500">{exp.duration}</p>
+                    <div className="flex items-center space-x-4">
+                      {exp.icon && (
+                        <div className="p-2 rounded-lg bg-gray-100 text-gray-600">
+                          <exp.icon size={24} />
+                        </div>
+                      )}
+                      <div>
+                        <h3 className="text-xl font-semibold text-gray-900">{exp.title}</h3>
+                        <p className="text-sm text-gray-500">{exp.duration}</p>
+                      </div>
                     </div>
                     {exp.link && (
-                      <div className="flex space-x-2">
-                        <a href={exp.link} target="_blank" rel="noopener noreferrer" className="text-indigo-600 hover:text-indigo-800 flex items-center space-x-1">
-                          <span>Learn More</span>
-                          <ExternalLink size={16} />
-                        </a>
-                      </div>
+                      <a 
+                        href={exp.link} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-indigo-600 hover:text-indigo-800 flex items-center space-x-1"
+                      >
+                        <span>Learn More</span>
+                        <ExternalLink size={16} />
+                      </a>
                     )}
                   </div>
+                  
                   <p className="mt-4 text-gray-700">{exp.description}</p>
+                  
+                  {/* Technologies */}
+                  {exp.technologies && (
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {exp.technologies.map((tech, techIndex) => (
+                        <span
+                          key={techIndex}
+                          className="px-3 py-1 bg-gray-100 rounded-full text-sm text-gray-700"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
                   {exp.moreInfo && (
                     <div className="mt-4 text-gray-600">
                       {exp.moreInfo}
@@ -1612,57 +1661,6 @@ const App = () => {
                 />
               ))}
             </div>
-          </Section>
-        );
-
-      case 'commercial':
-        return (
-          <Section
-            title="Commercial Work"
-            subtitle="Advertising and branded content projects"
-          >
-            <motion.div
-              variants={animationVariants.container}
-              initial="hidden"
-              animate="show"
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-            >
-              {experienceData.commercial.map((project, index) => (
-                <motion.div
-                  key={index}
-                  variants={animationVariants.item}
-                  className="bg-white border border-gray-200 rounded-lg hover:shadow-lg transition-all duration-200 p-4"
-                >
-                  {/* Project Header */}
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-base font-semibold text-gray-900">{project.title}</h3>
-                    {project.icon && (
-                      <project.icon className="w-4 h-4 text-gray-400 flex-shrink-0 ml-2" />
-                    )}
-                  </div>
-      
-                  {/* Duration */}
-                  <p className="text-xs text-gray-500 mb-2">{project.duration}</p>
-      
-                  {/* Description - Limited to 2 lines */}
-                  <p className="text-sm text-gray-600 line-clamp-2 mb-3">{project.description}</p>
-      
-                  {/* Technologies */}
-                  {project.technologies && (
-                    <div className="flex flex-wrap gap-1.5 mt-auto">
-                      {project.technologies.map((tech, techIndex) => (
-                        <span
-                          key={techIndex}
-                          className="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs whitespace-nowrap"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </motion.div>
-              ))}
-            </motion.div>
           </Section>
         );
 
