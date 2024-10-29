@@ -61,7 +61,6 @@ import {
   HardHat,
   Hammer,
   Pen,
-  ArrowRight,
 } from 'lucide-react';
 import Player from '@vimeo/player';
 
@@ -976,21 +975,6 @@ const SkillCard = ({
               <p className="text-sm text-gray-500">{years} years experience</p>
             </div>
           </div>
-          
-          {/* Add a small indicator if the card is clickable */}
-          {onClick && (
-            <motion.div
-              animate={{ x: [0, 5, 0] }}
-              transition={{ 
-                duration: 1.5, 
-                repeat: Infinity,
-                repeatType: "reverse" 
-              }}
-              className="text-gray-400"
-            >
-              <ArrowRight size={20} />
-            </motion.div>
-          )}
         </div>
 
         {/* Description */}
@@ -1033,7 +1017,7 @@ const SkillCard = ({
               {link.isConstructionLink ? (
                 <Hammer size={16} />
               ) : link.isNavigationLink ? (
-                <ArrowRight size={16} />
+                <ChevronRight size={16} />
               ) : (
                 <Github size={16} />
               )}
@@ -1620,11 +1604,7 @@ const App = () => {
           "TouchDesigner",
           "Ableton Live"
         ],
-        onClick: () => setActiveSection('personal'),
-        link: {
-          text: "View VJ Projects",
-          isNavigationLink: true
-        }
+        onClick: () => setActiveSection('personal')
       },
       {
         title: "Creative Development",
@@ -2224,11 +2204,7 @@ const App = () => {
                       "TouchDesigner",
                       "Ableton Live"
                     ],
-                    onClick: () => setActiveSection('personal'),
-                    link: {
-                      text: "View VJ Projects",
-                      isNavigationLink: true
-                    }
+                    onClick: () => setActiveSection('personal')
                   },
                   {
                     title: "Creative Development",
