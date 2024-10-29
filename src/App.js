@@ -991,7 +991,7 @@ const App = () => {
     film: [
       {
         title: "Proud Princess",
-        description: "Lead compositor on the feature film Proud Princess.",
+        description: "Compositor on the feature film Proud Princess.",
         duration: "September 2024 - October 2024",
         studio: "PFX Studio",
         icon: Film,
@@ -1000,10 +1000,10 @@ const App = () => {
         details: (
           <div className="space-y-4">
             <p>
-              Worked as the lead compositor, overseeing the visual effects compositing for key sequences.
+              Worked as a compositor, contributing to visual effects compositing for key sequences.
             </p>
             <ul className="list-disc pl-5">
-              <li>Led a team of compositors</li>
+              <li>Collaborated with the compositing team</li>
               <li>Ensured visual consistency across shots</li>
               <li>Optimized the compositing pipeline</li>
             </ul>
@@ -1018,7 +1018,7 @@ const App = () => {
       },
       {
         title: "Rosa & Dara",
-        description: "Lead compositor and technical director for 3D animated feature film.",
+        description: "Compositor and technical director for 3D animated feature film.",
         duration: "August 2021 - Present",
         studio: "Incognito Studio",
         icon: Film,
@@ -1027,10 +1027,10 @@ const App = () => {
         details: (
           <div className="space-y-4">
             <p>
-              Spearheaded the compositing and technical direction for the 3D animated feature "Rosa & Dara",
+              Worked as compositor and technical director for the 3D animated feature "Rosa & Dara",
               integrating complex 3D elements with live-action footage.
             </p>
-            <ul className="list-disc pl-5">
+            <ul className="list-disc pl-5 space-y-1 text-gray-700">
               <li>Developed custom Nuke tools for pipeline optimization</li>
               <li>Implemented automated quality control systems</li>
               <li>Created render farm integration solutions</li>
@@ -1182,12 +1182,12 @@ const App = () => {
         description: "Compositing work on the feature film Proud Princess.",
         icon: Layers,
         variant: 'featured',
-        technologies: ["Nuke", ],
+        technologies: ["Nuke"],
         moreInfo: (
           <div className="space-y-4">
             <h4 className="font-semibold text-lg mb-2">Key Achievements:</h4>
             <ul className="list-disc pl-5 space-y-1 text-gray-700">
-              <li>Led compositing team for key sequences</li>
+              <li>Collaborated with compositing team for key sequences</li>
               <li>Established shot consistency guidelines</li>
               <li>Optimized delivery pipeline</li>
             </ul>
@@ -1552,12 +1552,34 @@ const App = () => {
                 {/* Introduction */}
                 <div className="text-lg leading-relaxed space-y-6">
                   <p className="text-gray-800">
-                    <span className="font-semibold">I'm a Mid-Level Compositor and Technical Director specializing in high-end visual effects.</span> 
-                    Based in Prague, I focus on crafting seamless compositing solutions and developing efficient pipelines 
-                    that elevate visual storytelling. Currently working with <span className="font-semibold">Incognito Studio and PFX Studio</span>, 
-                    I've contributed to major projects including "<span className="italic">Proud Princess</span>" and 
-                    "<span className="italic">Rosa & Dara a jejich velké letní dobrodružství</span>", a 3D feature film 
-                    blending 2D and 3D animation.
+                    <span className="font-semibold">I'm a Compositor and Technical Director</span>
+                    <span> specializing in </span>
+                    <span className="font-semibold">full CGI compositing</span>
+                    <span>.</span>
+                    
+                    <br />
+                    
+                    <span>Based in </span>
+                    <span className="font-semibold">Prague</span>
+                    <span>, I focus on crafting </span>
+                    <span className="font-semibold">seamless compositing solutions</span>
+                    <span> and developing </span>
+                    <span className="font-semibold">efficient pipelines</span>
+                    <span> for animated features.</span>
+                    
+                    <br />
+                    
+                    <span>My experience spans across </span>
+                    <span className="font-semibold">feature films</span>
+                    <span>, </span>
+                    <span className="font-semibold">commercials</span>
+                    <span>, and </span>
+                    <span className="font-semibold">music videos</span>
+                    <span>, where I've contributed to numerous high-profile projects in both </span>
+                    <span className="font-semibold">2D</span>
+                    <span> and </span>
+                    <span className="font-semibold">3D animation</span>
+                    <span>.</span>
                   </p>
 
                   {/* Core Expertise */}
@@ -1571,7 +1593,7 @@ const App = () => {
                         </div>
                         <div>
                           <span className="font-semibold block text-gray-900">Advanced Compositing</span>
-                          <span className="text-sm text-gray-600">Expert in Nuke with strong focus on feature film VFX</span>
+                          <span className="text-sm text-gray-600">Expert in Nuke with focus on full CGI animation</span>
                         </div>
                       </li>
 
@@ -1584,50 +1606,82 @@ const App = () => {
                           <span className="text-sm text-gray-600">Pipeline development & Python automation for VFX workflows</span>
                         </div>
                       </li>
-
-                      {/* Secondary Skills */}
-                      <li className="flex items-center space-x-3 p-4 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div className="p-2 bg-black/5 rounded-lg">
-                          <Video className="w-6 h-6 text-gray-800" />
-                        </div>
-                        <div>
-                          <span className="font-semibold block text-gray-900">Motion Design</span>
-                          <span className="text-sm text-gray-600">Supporting skill for commercial projects</span>
-                        </div>
-                      </li>
-
-                      <li className="flex items-center space-x-3 p-4 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-300">
-                        <div className="p-2 bg-black/5 rounded-lg">
-                          <Settings className="w-6 h-6 text-gray-800" />
-                        </div>
-                        <div>
-                          <span className="font-semibold block text-gray-900">Pipeline Tools</span>
-                          <span className="text-sm text-gray-600">Custom tool development for Nuke</span>
-                        </div>
-                      </li>
                     </ul>
                   </div>
 
                   {/* Professional Experience Highlight */}
                   <p className="text-gray-800">
-                    My professional portfolio includes VFX compositing for clients such as <span className="font-semibold">Panasonic Japan, 
-                    Moneta Bank, and McDonald's</span>, as well as VFX supervision for the Creditas project. I've also contributed to the 
-                    Let it Roll Festival, compositing a 5-minute opening sequence, and work as a freelance Motion Graphic Designer with 
-                    VIG Production.
+                    <span>My professional journey encompasses </span>
+                    <span className="font-semibold">compositing for animated features</span>
+                    <span>, </span>
+                    <span className="font-semibold">technical direction</span>
+                    <span> for animation studios, and </span>
+                    <span className="font-semibold">pipeline development</span>
+                    <span> for CGI productions.</span>
+                    
+                    <br />
+                    
+                    <span>I've also contributed to </span>
+                    <span className="font-semibold">major music festivals</span>
+                    <span> and work as a </span>
+                    <span className="font-semibold">freelance Motion Graphic Designer</span>
+                    <span>.</span>
                   </p>
 
                   {/* Technical Skills & Interests */}
                   <p className="text-gray-800">
-                    Beyond my core expertise in Nuke compositing and pipeline development, I explore experimental animation, glitch art, 
-                    and the fusion of analog and digital media. I'm also experienced in VJing using Resolume Arena and TouchDesigner, 
-                    constantly pushing the boundaries of visual storytelling.
+                    <span>Beyond my core expertise in </span>
+                    <span className="font-semibold">Nuke compositing</span>
+                    <span> and </span>
+                    <span className="font-semibold">pipeline development</span>
+                    <span>,</span>
+                    
+                    <br />
+                    
+                    <span>I explore </span>
+                    <span className="font-semibold">experimental animation</span>
+                    <span>, </span>
+                    <span className="font-semibold">glitch art</span>
+                    <span>, and the </span>
+                    <span className="font-semibold">fusion of analog and digital media</span>
+                    <span>.</span>
+                    
+                    <br />
+                    
+                    <span>I'm also experienced in </span>
+                    <span className="font-semibold">VJing</span>
+                    <span> using </span>
+                    <span className="font-semibold">real-time visual tools</span>
+                    <span>, constantly pushing the boundaries of visual storytelling.</span>
                   </p>
 
                   {/* Closing Statement */}
                   <p className="text-gray-800 mt-8 text-lg italic border-l-4 border-black pl-4">
-                    I'm always eager to learn and grow, having attended conferences like FMX and Anifilm. Currently open to new opportunities 
-                    and willing to relocate to the Canary Islands, I combine technical expertise with creative vision to deliver exceptional 
-                    visual effects solutions.
+                    <span>I'm always eager to learn and grow, regularly attending </span>
+                    <span className="font-semibold">industry conferences</span>
+                    <span> like </span>
+                    <span className="font-semibold">FMX</span>
+                    <span> and </span>
+                    <span className="font-semibold">Anifilm</span>
+                    <span>.</span>
+                    
+                    <br />
+                    
+                    <span>Currently </span>
+                    <span className="font-semibold">open to new opportunities</span>
+                    <span> and </span>
+                    <span className="font-semibold">willing to relocate</span>
+                    <span>,</span>
+                    
+                    <br />
+                    
+                    <span>I combine </span>
+                    <span className="font-semibold">technical expertise</span>
+                    <span> with </span>
+                    <span className="font-semibold">creative vision</span>
+                    <span> to deliver </span>
+                    <span className="font-semibold">exceptional visual effects solutions</span>
+                    <span>.</span>
                   </p>
                 </div>
               </motion.div>
@@ -1714,11 +1768,12 @@ const App = () => {
             title="Commercial Work"
             subtitle="Advertising and branded content projects"
           >
+            {/* Main Grid */}
             <motion.div
               variants={animationVariants.container}
               initial="hidden"
               animate="show"
-              className="grid grid-cols-2 lg:grid-cols-3 gap-4"
+              className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-12"
             >
               {experienceData.commercial.map((project, index) => (
                 <motion.div
@@ -1739,6 +1794,65 @@ const App = () => {
                   <p className="text-xs md:text-sm text-gray-600 line-clamp-2 mb-3">{project.description}</p>
                 </motion.div>
               ))}
+            </motion.div>
+
+            {/* Professional Footer Section */}
+            <motion.div
+              variants={animationVariants.fadeInUp}
+              className="mt-12 border-t border-gray-200 pt-8"
+            >
+              <div className="grid md:grid-cols-3 gap-8">
+                {/* Statistics */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Project Statistics</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-black/5 p-4 rounded-lg">
+                      <div className="text-2xl font-bold text-black">20+</div>
+                      <div className="text-sm text-gray-600">Clients</div>
+                    </div>
+                    <div className="bg-black/5 p-4 rounded-lg">
+                      <div className="text-2xl font-bold text-black">50+</div>
+                      <div className="text-sm text-gray-600">Projects</div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Services */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Services</h3>
+                  <ul className="space-y-2 text-sm text-gray-600">
+                    <li className="flex items-center gap-2">
+                      <ChevronRight size={16} className="text-black" />
+                      <span>Visual Effects & Compositing</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <ChevronRight size={16} className="text-black" />
+                      <span>Motion Graphics Design</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <ChevronRight size={16} className="text-black" />
+                      <span>Technical Direction</span>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Contact CTA */}
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900">Work Together</h3>
+                  <p className="text-sm text-gray-600">
+                    Looking for professional VFX services? Let's discuss your next project.
+                  </p>
+                  <motion.a
+                    href="mailto:martintomek.vfx@gmail.com"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors text-sm"
+                  >
+                    <Mail size={16} />
+                    <span>Get in Touch</span>
+                  </motion.a>
+                </div>
+              </div>
             </motion.div>
           </Section>
         );
