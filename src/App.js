@@ -58,6 +58,10 @@ import {
   Gauge,
   Sliders,
   Pause,
+  HardHat,
+  Hammer,
+  Pen,
+  ArrowRight,
 } from 'lucide-react';
 import Player from '@vimeo/player';
 
@@ -474,6 +478,140 @@ const VideoModal = ({ url, onClose, title }) => {
   );
 };
 
+// First, add this new component near your other modal components:
+const UnderConstructionModal = ({ onClose }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-black/80 rounded-xl p-8 max-w-md w-full mx-4 relative border border-white/10"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Close button */}
+        <motion.button
+          className="absolute top-4 right-4 text-white/60 hover:text-white"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          onClick={onClose}
+        >
+          <X size={24} />
+        </motion.button>
+
+        {/* Construction Animation */}
+        <div className="flex justify-center mb-6">
+          <motion.div
+            animate={{
+              rotate: [0, 0, 180, 180, 0],
+              scale: [1, 1.2, 1.2, 1, 1],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              repeatType: "loop",
+            }}
+            className="w-20 h-20 text-white"
+          >
+            <HardHat size={80} />
+          </motion.div>
+        </div>
+
+        <motion.div
+          initial={{ y: 10, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <h3 className="text-2xl font-bold text-center mb-4 text-white">
+            Under Construction
+          </h3>
+          <p className="text-white/80 text-center mb-6">
+            This section is currently being crafted with care. Check back soon for amazing motion design content!
+          </p>
+
+          {/* Progress Bar */}
+          <div className="relative h-2 bg-white/10 rounded-full overflow-hidden mb-6">
+            <motion.div
+              className="absolute inset-y-0 left-0 bg-white"
+              animate={{
+                width: ["0%", "100%"],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatType: "reverse",
+                ease: "easeInOut",
+              }}
+            />
+          </div>
+
+          {/* Tools Being Added */}
+          <div className="flex justify-center space-x-4">
+            {[Film, Pen, Wand2].map((Icon, index) => (
+              <motion.div
+                key={index}
+                animate={{
+                  y: [-4, 4, -4],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  delay: index * 0.2,
+                }}
+                className="text-white/80"
+              >
+                <Icon size={24} />
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Additional Animated Elements */}
+          <div className="absolute inset-0 pointer-events-none">
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-t from-white/5 to-transparent opacity-50"
+              animate={{
+                opacity: [0.3, 0.5, 0.3],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                repeatType: "reverse",
+              }}
+            />
+            <div className="absolute inset-0 overflow-hidden">
+              {[...Array(3)].map((_, index) => (
+                <motion.div
+                  key={index}
+                  className="absolute w-px h-20 bg-white/20"
+                  style={{
+                    left: `${30 * (index + 1)}%`,
+                    top: '-20%',
+                  }}
+                  animate={{
+                    y: ['0%', '150%'],
+                  }}
+                  transition={{
+                    duration: 2.5,
+                    repeat: Infinity,
+                    delay: index * 0.4,
+                    ease: "linear",
+                  }}
+                />
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 // ====================
 // Component: ContactInfo
 // ====================
@@ -800,14 +938,29 @@ const SkillCard = ({
   icon: Icon, 
   description,
   tools,
-  years
+  years,
+  link,
+  videoUrl,
+  onClick
 }) => {
+  const [showVideo, setShowVideo] = useState(false);
+  const [showConstruction, setShowConstruction] = useState(false);
+
+  const handleClick = (e) => {
+    if (onClick) {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
       className="bg-white border border-gray-200 rounded-xl overflow-hidden"
+      onClick={handleClick}
+      style={onClick ? { cursor: 'pointer' } : {}}
     >
       <div className="p-6">
         {/* Header */}
@@ -823,6 +976,21 @@ const SkillCard = ({
               <p className="text-sm text-gray-500">{years} years experience</p>
             </div>
           </div>
+          
+          {/* Add a small indicator if the card is clickable */}
+          {onClick && (
+            <motion.div
+              animate={{ x: [0, 5, 0] }}
+              transition={{ 
+                duration: 1.5, 
+                repeat: Infinity,
+                repeatType: "reverse" 
+              }}
+              className="text-gray-400"
+            >
+              <ArrowRight size={20} />
+            </motion.div>
+          )}
         </div>
 
         {/* Description */}
@@ -843,7 +1011,68 @@ const SkillCard = ({
             </div>
           </div>
         )}
+
+        {/* Action Buttons */}
+        <div className="mt-6 flex gap-4">
+          {link && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                if (link.isConstructionLink) {
+                  setShowConstruction(true);
+                } else if (link.isNavigationLink && onClick) {
+                  onClick();
+                } else if (link.url !== '#') {
+                  window.open(link.url, '_blank');
+                }
+              }}
+              className="inline-flex items-center space-x-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              {link.isConstructionLink ? (
+                <Hammer size={16} />
+              ) : link.isNavigationLink ? (
+                <ArrowRight size={16} />
+              ) : (
+                <Github size={16} />
+              )}
+              <span>{link.text}</span>
+            </motion.button>
+          )}
+          
+          {videoUrl && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowVideo(true);
+              }}
+              className="inline-flex items-center space-x-2 px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 transition-colors"
+            >
+              <Play size={16} />
+              <span>Watch Demo</span>
+            </motion.button>
+          )}
+        </div>
       </div>
+
+      {/* Modals */}
+      <AnimatePresence>
+        {showVideo && videoUrl && (
+          <VideoModal
+            url={videoUrl}
+            title={title}
+            onClose={() => setShowVideo(false)}
+          />
+        )}
+        {showConstruction && (
+          <UnderConstructionModal
+            onClose={() => setShowConstruction(false)}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };
@@ -1050,11 +1279,21 @@ const App = () => {
     commercial: [
       {
         title: "Panasonic Japan",
-        description: "Led VFX and compositing for international product launch campaign.",
-        duration: "2023",
-        variant: 'default',
-        technologies: ["Nuke", "After Effects", "DaVinci Resolve"],
-        details: null,
+        description: "Led the compositing team for an international product launch campaign featuring full CGI integration.",
+        duration: "2022 - 2023",
+        variant: 'featured',
+        technologies: ["Nuke", "After Effects", "DaVinci Resolve", "FX Development"],
+        details: (
+          <div className="space-y-4">
+            <p>Spearheaded the visual effects development for a series of high-profile TV commercials, combining complex CGI elements with innovative FX sequences.</p>
+            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+              <li>Developed and implemented custom FX solutions</li>
+              <li>Managed compositing pipeline for multiple deliverables</li>
+              <li>Ensured consistent visual quality across the campaign</li>
+              <li>Collaborated with international creative teams</li>
+            </ul>
+          </div>
+        ),
         media: [
           'https://via.placeholder.com/800x600.png?text=Panasonic+Campaign+1',
           'https://via.placeholder.com/800x600.png?text=Panasonic+Campaign+2'
@@ -1063,115 +1302,166 @@ const App = () => {
         link: '#'
       },
       {
+        title: "Epet",
+        description: "Delivered comprehensive compositing solutions for a multi-spot advertising campaign.",
+        duration: "2024",
+        variant: 'default',
+        technologies: ["Nuke", "After Effects", "Compositing"],
+        details: (
+          <div className="space-y-4">
+            <p>Created seamless visual effects integration across multiple TV commercials, focusing on technical excellence and creative consistency.</p>
+            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+              <li>Executed complex compositing workflows</li>
+              <li>Maintained brand consistency across deliverables</li>
+              <li>Optimized rendering pipeline for efficiency</li>
+            </ul>
+          </div>
+        ),
+        media: null,
+        link: '#'
+      },
+      {
         title: "Moneta Bank",
-        description: "Created visual effects and motion graphics for banking service advertisements.",
+        description: "Specialized in precise 3D integration and plate matching for banking service advertisements.",
         duration: "2023",
         variant: 'default',
-        technologies: ["Nuke", "After Effects"],
-        details: null,
-        media: [
-          'https://via.placeholder.com/800x600.png?text=Moneta+Bank+1',
-          'https://via.placeholder.com/800x600.png?text=Moneta+Bank+2'
-        ],
-        mediaType: 'image',
+        technologies: ["Nuke", "3D Integration", "Plate Matching"],
+        details: (
+          <div className="space-y-4">
+            <p>Executed high-precision 3D integration work, ensuring perfect alignment and realistic interaction between CGI elements and live-action footage.</p>
+            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+              <li>Implemented advanced tracking solutions</li>
+              <li>Achieved photorealistic integration results</li>
+              <li>Optimized workflow for rapid iterations</li>
+            </ul>
+          </div>
+        ),
+        media: null,
         link: '#'
       },
       {
         title: "McDonald's",
-        description: "Developed dynamic motion graphics and VFX for promotional campaigns.",
+        description: "Created a dynamic 10-second spot integrating 2D and 3D elements for brand campaign.",
         duration: "2023",
         variant: 'default',
-        technologies: ["Nuke", "After Effects"],
-        details: null,
-        media: [
-          'https://via.placeholder.com/800x600.png?text=McDonalds+1',
-          'https://via.placeholder.com/800x600.png?text=McDonalds+2'
-        ],
-        mediaType: 'image',
+        technologies: ["Nuke", "After Effects", "2D/3D Integration"],
+        details: (
+          <div className="space-y-4">
+            <p>Developed a visually striking commercial combining traditional animation with 3D elements, delivering impact in a concise timeframe.</p>
+            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+              <li>Seamlessly blended 2D and 3D assets</li>
+              <li>Optimized rendering for broadcast delivery</li>
+              <li>Maintained brand guidelines throughout</li>
+            </ul>
+          </div>
+        ),
+        media: null,
         link: '#'
       },
       {
         title: "T-Mobile",
-        description: "Created visual effects for brand campaigns and product launches.",
-        duration: "2023",
+        description: "Developed animatic animations for campaign visualization and client approval.",
+        duration: "2022",
         variant: 'default',
-        technologies: ["Nuke", "After Effects"],
-        details: null,
-        media: [
-          'https://via.placeholder.com/800x600.png?text=T-Mobile+1',
-          'https://via.placeholder.com/800x600.png?text=T-Mobile+2'
-        ],
-        mediaType: 'image',
+        technologies: ["After Effects", "Animation", "Storyboarding"],
+        details: (
+          <div className="space-y-4">
+            <p>Created detailed animatic sequences to visualize complex campaign concepts, facilitating client communication and approval processes.</p>
+          </div>
+        ),
+        media: null,
         link: '#'
       },
       {
         title: "O2",
-        description: "Delivered motion graphics and visual effects for telecommunications campaigns.",
-        duration: "2023",
+        description: "Produced comprehensive animatic animations for telecommunications campaign planning.",
+        duration: "2022",
         variant: 'default',
-        technologies: ["Nuke", "After Effects"],
-        details: null,
-        media: [
-          'https://via.placeholder.com/800x600.png?text=O2+1',
-          'https://via.placeholder.com/800x600.png?text=O2+2'
-        ],
-        mediaType: 'image',
+        technologies: ["After Effects", "Animation", "Pre-visualization"],
+        details: (
+          <div className="space-y-4">
+            <p>Developed detailed pre-visualization animations to guide production planning and stakeholder approval.</p>
+          </div>
+        ),
+        media: null,
         link: '#'
       },
       {
         title: "PSS",
-        description: "Developed visual effects and motion graphics for corporate communications.",
+        description: "Executed full CGI project requiring comprehensive visual effects integration.",
         duration: "2023",
         variant: 'default',
-        technologies: ["Nuke", "After Effects"],
-        details: null,
-        media: [
-          'https://via.placeholder.com/800x600.png?text=PSS+1',
-          'https://via.placeholder.com/800x600.png?text=PSS+2'
-        ],
-        mediaType: 'image',
+        technologies: ["Nuke", "CGI Integration", "Compositing"],
+        details: (
+          <div className="space-y-4">
+            <p>Led the development of a complete CGI solution for corporate communications, focusing on photorealistic results and technical excellence.</p>
+            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+              <li>Managed complete CGI pipeline</li>
+              <li>Implemented quality control procedures</li>
+              <li>Delivered broadcast-ready composites</li>
+            </ul>
+          </div>
+        ),
+        media: null,
         link: '#'
       },
       {
         title: "7energy",
-        description: "Created dynamic visual content for energy drink marketing campaigns.",
+        description: "Specialized keying and compositing work for electricity provider's brand campaign.",
         duration: "2023",
         variant: 'default',
-        technologies: ["Nuke", "After Effects"],
-        details: null,
-        media: [
-          'https://via.placeholder.com/800x600.png?text=7energy+1',
-          'https://via.placeholder.com/800x600.png?text=7energy+2'
-        ],
-        mediaType: 'image',
+        technologies: ["Nuke", "Advanced Keying", "Compositing"],
+        details: (
+          <div className="space-y-4">
+            <p>Executed complex keying solutions for electricity provider's brand campaign, delivering high-impact visuals that emphasized energy and power.</p>
+            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+              <li>Implemented advanced keying techniques for dynamic energy effects</li>
+              <li>Created compelling visual metaphors for electrical power</li>
+              <li>Developed efficient compositing workflows for tight deadlines</li>
+              <li>Maintained consistent brand identity throughout campaign</li>
+            </ul>
+          </div>
+        ),
+        media: null,
+        link: '#'
+      },
+      {
+        title: "Creditas",
+        description: "Provided on-set VFX supervision and led compositing team for major campaign.",
+        duration: "2023",
+        variant: 'featured',
+        technologies: ["Nuke", "On-set Supervision", "Team Leadership"],
+        details: (
+          <div className="space-y-4">
+            <p>Managed both on-set VFX supervision and post-production compositing, ensuring seamless workflow from capture to final delivery.</p>
+            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+              <li>Supervised VFX requirements during shooting</li>
+              <li>Coordinated with directors and cinematographers</li>
+              <li>Led post-production compositing team</li>
+              <li>Established efficient workflow protocols</li>
+            </ul>
+          </div>
+        ),
+        media: null,
         link: '#'
       },
       {
         title: "Billa",
-        description: "Delivered visual effects and motion graphics for retail advertising.",
+        description: "Executed precise CGI integration and plate matching for retail advertising.",
         duration: "2023",
         variant: 'default',
-        technologies: ["Nuke", "After Effects"],
-        details: null,
-        media: [
-          'https://via.placeholder.com/800x600.png?text=Billa+1',
-          'https://via.placeholder.com/800x600.png?text=Billa+2'
-        ],
-        mediaType: 'image',
-        link: '#'
-      },
-      {
-        title: "Epet",
-        description: "Created visual content for pet supply retailer marketing campaigns.",
-        duration: "2023",
-        variant: 'default',
-        technologies: ["Nuke", "After Effects"],
-        details: null,
-        media: [
-          'https://via.placeholder.com/800x600.png?text=Epet+1',
-          'https://via.placeholder.com/800x600.png?text=Epet+2'
-        ],
-        mediaType: 'image',
+        technologies: ["Nuke", "CGI Integration", "Plate Matching"],
+        details: (
+          <div className="space-y-4">
+            <p>Delivered high-quality CGI integration work for retail advertising campaign, focusing on realistic product presentation and environmental interaction.</p>
+            <ul className="list-disc pl-5 space-y-1 text-gray-700">
+              <li>Implemented advanced tracking solutions</li>
+              <li>Achieved seamless CGI integration</li>
+              <li>Maintained consistent lighting and perspective matching</li>
+            </ul>
+          </div>
+        ),
+        media: null,
         link: '#'
       }
     ],
@@ -1287,7 +1577,8 @@ const App = () => {
           "Nuke",
           "After Effects",
           "DaVinci Resolve",
-        ]
+        ],
+        videoUrl: "https://player.vimeo.com/video/1016090207"
       },
       {
         title: "Technical Direction",
@@ -1297,7 +1588,11 @@ const App = () => {
         tools: [
           "Python",
           "Nuke Scripting",
-        ]
+        ],
+        link: {
+          text: "View GitHub",
+          url: "https://github.com/Themolx"
+        }
       },
       {
         title: "Motion Design",
@@ -1308,7 +1603,12 @@ const App = () => {
           "Adobe After Effects",
           "Blender",
           "Adobe Premiere Pro",
-        ]
+        ],
+        link: {
+          text: "View Work",
+          url: "#",
+          isConstructionLink: true
+        }
       },
       {
         title: "VJing",
@@ -1319,7 +1619,12 @@ const App = () => {
           "Resolume Arena",
           "TouchDesigner",
           "Ableton Live"
-        ]
+        ],
+        onClick: () => setActiveSection('personal'),
+        link: {
+          text: "View VJ Projects",
+          isNavigationLink: true
+        }
       },
       {
         title: "Creative Development",
@@ -1876,7 +2181,8 @@ const App = () => {
                       "Nuke",
                       "After Effects",
                       "DaVinci Resolve",
-                    ]
+                    ],
+                    videoUrl: "https://player.vimeo.com/video/1016090207"
                   },
                   {
                     title: "Technical Direction",
@@ -1886,7 +2192,11 @@ const App = () => {
                     tools: [
                       "Python",
                       "Nuke Scripting",
-                    ]
+                    ],
+                    link: {
+                      text: "View GitHub",
+                      url: "https://github.com/Themolx"
+                    }
                   },
                   {
                     title: "Motion Design",
@@ -1897,7 +2207,12 @@ const App = () => {
                       "Adobe After Effects",
                       "Blender",
                       "Adobe Premiere Pro",
-                    ]
+                    ],
+                    link: {
+                      text: "View Work",
+                      url: "#",
+                      isConstructionLink: true
+                    }
                   },
                   {
                     title: "VJing",
@@ -1908,7 +2223,12 @@ const App = () => {
                       "Resolume Arena",
                       "TouchDesigner",
                       "Ableton Live"
-                    ]
+                    ],
+                    onClick: () => setActiveSection('personal'),
+                    link: {
+                      text: "View VJ Projects",
+                      isNavigationLink: true
+                    }
                   },
                   {
                     title: "Creative Development",
